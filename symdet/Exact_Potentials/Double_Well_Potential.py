@@ -60,6 +60,20 @@ class Double_Well_Potential(Potential):
         plt.ylim(-1.5, 1.0)
         plt.show()
 
+    def plot_clusters(self, data, x_val):
+        """
+        Plot the clustered data on the raw.
+        """
+
+        x_data = list(data.keys())
+        radii = []
+
+        for key in x_data:
+            for function_value in data[key]:
+                index = tf.where(y=function_value, x=x_val , y=data[key])
+                radii.append(x_val[index])
+        print(radii)
+
     def build_dataset(self):
         """ Call all methods and build the dataset """
 
@@ -76,4 +90,5 @@ class Double_Well_Potential(Potential):
             filtered_array = np.random.choice(filtered_array, size=self.n_class_members)
             potential_data[class_keys[i]] = filtered_array
 
+        self.plot_clusters(potential_data, radial_values)
         return potential_data

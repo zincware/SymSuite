@@ -18,7 +18,7 @@ class Visualizer:
         self.colour_map = colour_map  # colour map to be used in the plotting - differs for different potentials
 
 
-    def tsne_visualization(self, perplexity=50, n_components=2):
+    def tsne_visualization(self, perplexity=80, n_components=2):
         """ display a tsne representation of the models embedding layer """
 
         tsne_model = TSNE(n_components=n_components, perplexity=perplexity, random_state=1)

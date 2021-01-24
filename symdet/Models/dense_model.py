@@ -66,18 +66,18 @@ class DenseModel:
 
         # Loop over the layers excluding one for the input, the second last, the embedding, and the softmax layer
         for i in range(self.n_layers - 2):
-            model.add(tf.keras.layers.Dense(self.units, self.activation, kernel_regularizer=regularizers.l2(0.0)))
+            model.add(tf.keras.layers.Dense(self.units, self.activation, kernel_regularizer=regularizers.l2(0.0000)))
 
         # Add the second-to-last layer
         model.add(tf.keras.layers.Dense(self.units,
                                         self.activation,
                                         name='second_last_layer',
-                                        kernel_regularizer=regularizers.l2(0.0)))
+                                        kernel_regularizer=regularizers.l2(0.0000)))
         # Add the embedding layer
         model.add(tf.keras.layers.Dense(self.units,
                                         self.activation,
                                         name='embedding_layer',
-                                        kernel_regularizer=regularizers.l2(0.0)))
+                                        kernel_regularizer=regularizers.l2(0.001)))
 
         # Add the softmax layer
         model.add(tf.keras.layers.Dense(len(self.data_dict), name='softmax_layer', activation='softmax'))
@@ -93,7 +93,7 @@ class DenseModel:
         reduction_callback = tf.keras.callbacks.ReduceLROnPlateau(monitor=self.monitor, patience=self.lr_patience,
                                                                   factor=0.1, mode='auto', min_lr=0.00001, cooldown=0)
 
-        opt = tf.keras.optimizers.Adam(learning_rate=self.lr, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0)
+        opt = tf.keras.optimizers.Adam(learning_rate=self.lr, decay=0.)
 
         self.model.compile(optimizer=opt, loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
                            metrics=['accuracy'])
@@ -109,14 +109,16 @@ class DenseModel:
         print(self.model.summary())  # Print a model summary
 
         # Train the model
-        self.model.fit(x=self.train_ds[:, 0],
-                       y=tf.keras.utils.to_categorical(self.train_ds[:, 1]),
-                       batch_size=self.batch_size,
-                       shuffle=True,
-                       validation_data=(self.test_ds[:, 0], tf.keras.utils.to_categorical(self.test_ds[:, 1])),
-                       verbose=1,
-                       epochs=self.epochs,
-                       callbacks=callbacks)
+
+        for i in range(1, 6):
+            self.model.fit(x=self.train_ds[:, 0],
+                           y=tf.keras.utils.to_categorical(self.train_ds[:, 1]),
+                           batch_size=self.batch_size,
+                           shuffle=True,
+                           validation_data=(self.test_ds[:, 0], tf.keras.utils.to_categorical(self.test_ds[:, 1])),
+                           verbose=1,
+                           epochs=self.epochs,
+                           callbacks=callbacks)
 
         return self.train_ds
 
@@ -132,7 +134,6 @@ class DenseModel:
     def get_embedding_layer_representation(self, data_array):
         """ Return the representation constructed by the embedding layer """
 
-
         model = tf.keras.Sequential()
         input = Input(shape=[1])
         model.add(input)
@@ -140,7 +141,5 @@ class DenseModel:
             model.add(layer)
 
         model.build()
-
-        print(model.summary())
 
         return model.predict(data_array)
