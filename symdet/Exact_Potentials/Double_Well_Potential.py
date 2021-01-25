@@ -70,7 +70,7 @@ class Double_Well_Potential(Potential):
 
         for key in x_data:
             for function_value in data[key]:
-                index = tf.where(y=function_value, x=x_val , y=data[key])
+                index = tf.where(function_value, x=x_val , y=data[key])
                 radii.append(x_val[index])
         print(radii)
 
@@ -90,5 +90,5 @@ class Double_Well_Potential(Potential):
             filtered_array = np.random.choice(filtered_array, size=self.n_class_members)
             potential_data[class_keys[i]] = filtered_array
 
-        self.plot_clusters(potential_data, radial_values)
+        #self.plot_clusters(potential_data, radial_values)
         return potential_data

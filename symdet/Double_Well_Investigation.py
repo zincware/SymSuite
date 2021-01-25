@@ -24,22 +24,22 @@ def main_clustering():
     training_data = double_well_potential.build_dataset()
 
     # Build, train, and evaluate the model
-    #model = DenseModel(training_data,
-    #                   n_layers=7,
-    #                   units=80,
-    #                   epochs=10,
-    #                   batch_size=64,
-    #                   lr=0.00025)  # Build the model
-    #truth_values = model.train_model()
+    model = DenseModel(training_data,
+                       n_layers=7,
+                       units=80,
+                       epochs=10,
+                       batch_size=64,
+                       lr=0.00025)  # Build the model
+    truth_values = model.train_model()
 
-    #predictions = model.model.predict(truth_values[:, 0])  # get the model predictions for the training data
-    #colour_map, clusters, visualization_data = double_well_potential._cluster_data(predictions, truth_values)
+    predictions = model.model.predict(truth_values[:, 0])  # get the model predictions for the training data
+    colour_map, clusters, visualization_data = double_well_potential._cluster_data(predictions, truth_values)
 
-    #representation = model.get_embedding_layer_representation(visualization_data)  # get the embedding layer
+    representation = model.get_embedding_layer_representation(visualization_data)  # get the embedding layer
 
     # Visualize the model
-    #visualizer = Visualizer(representation, colour_map)
-    #visualizer.tsne_visualization()
+    visualizer = Visualizer(representation, colour_map)
+    visualizer.tsne_visualization()
 
 
 def main_generator_extraction():
