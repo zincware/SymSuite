@@ -61,10 +61,10 @@ class DenseModel:
         """ Build the ml model """
 
         model = tf.keras.Sequential()
-        input = Input(shape=[1])
-        model.add(input)
+        input_layer = Input(shape=[1])
+        model.add(input_layer)
 
-        # Loop over the layers excluding one for the input, the second last, the embedding, and the softmax layer
+        # Loop over the layers excluding one for the input_layer, the second last, the embedding, and the softmax layer
         for i in range(self.n_layers - 2):
             model.add(tf.keras.layers.Dense(self.units, self.activation, kernel_regularizer=regularizers.l2(0.0000)))
 
@@ -95,8 +95,8 @@ class DenseModel:
 
         opt = tf.keras.optimizers.Adam(learning_rate=self.lr, decay=0.)
 
-        self.model.compile(optimizer=opt, loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
-                           metrics=['accuracy'])
+        self.model.compile(optimizer=opt, loss='categorical_crossentropy',
+                           metrics=['acc'])
 
         return [terminating_callback, reduction_callback]
 
@@ -117,8 +117,7 @@ class DenseModel:
                            shuffle=True,
                            validation_data=(self.test_ds[:, 0], tf.keras.utils.to_categorical(self.test_ds[:, 1])),
                            verbose=1,
-                           epochs=self.epochs,
-                           callbacks=callbacks)
+                           epochs=self.epochs)
 
         return self.train_ds
 
