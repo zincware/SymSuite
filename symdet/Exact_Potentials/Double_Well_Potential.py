@@ -9,7 +9,7 @@ Description: A class for the construction and sampling of a double well potentia
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-import time
+from tqdm import tqdm
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 
@@ -60,19 +60,32 @@ class Double_Well_Potential(Potential):
         plt.ylim(-1.5, 1.0)
         plt.show()
 
-    def plot_clusters(self, data, x_val):
+    def plot_clusters(self, data, x_val, function_values):
         """
         Plot the clustered data on the raw.
         """
 
         x_data = list(data.keys())
-        radii = []
-
+        f_val = []
+        counter = 0
         for key in x_data:
-            for function_value in data[key]:
-                index = tf.where(y=function_value, x=x_val , y=data[key])
-                radii.append(x_val[index])
-        print(radii)
+            f_val.append([])
+            for radial_point in tqdm(data[key]):
+                index = list(x_val).index(radial_point)
+                f_val[counter].append([radial_point, function_values[index]])
+            counter +=1
+
+        f_val = np.array(f_val)
+        for group in range(len(f_val)):
+            plt.plot(f_val[group][:, 0], f_val[group][:, 1], '.')
+
+        r = np.linspace(-2.3, 2.3, 100)
+        function = -1 * 2.3 * r ** 2 + r ** 4
+
+        plt.plot(r, function)
+        plt.ylim(-1.5, 1.0)
+        plt.xlim(-0.1, 2.0)
+        plt.show()
 
     def build_dataset(self):
         """ Call all methods and build the dataset """
@@ -90,5 +103,5 @@ class Double_Well_Potential(Potential):
             filtered_array = np.random.choice(filtered_array, size=self.n_class_members)
             potential_data[class_keys[i]] = filtered_array
 
-        self.plot_clusters(potential_data, radial_values)
+        #self.plot_clusters(potential_data, radial_values, function_values)
         return potential_data

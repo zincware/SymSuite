@@ -32,7 +32,7 @@ class SO2:
     def generate_data(self):
         """ Generate data on a circle"""
 
-        self.theta = np.random.rand((self.n_points))*(np.pi * 2) # generate angles randomly
+        self.theta = np.random.rand(self.n_points) * (np.pi * 2)  # generate angles randomly
         # generate x, y samples
         x = self.radius*np.cos(self.theta)
         y = self.radius*np.sin(self.theta)
@@ -49,5 +49,8 @@ class SO2:
         """ Plot the data """
 
         plt.plot(self.data[:, 0], self.data[:, 1], 'k.')
+        plt.xlim(-1.5, 1.5)
+        plt.ylim(-1.5, 1.5)
+        plt.axis('equal')
         plt.show()
 

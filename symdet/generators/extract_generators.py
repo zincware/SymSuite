@@ -3,6 +3,9 @@
 import numpy as np
 import random
 
+from sklearn.decomposition import PCA
+
+
 class GeneratorExtract:
     """ Generate extraction class
 
@@ -40,9 +43,19 @@ class GeneratorExtract:
         self.point_pairs = []
         self.generators = []
 
-    def _perform_PCA(self):
-        """ Perform PCA on the data to remove redundant data """
-        pass
+    def _perform_PCA(self, data):
+        """
+        Perform PCA on the data to remove redundant data
+        """
+
+        pca = PCA(n_components=4)
+        pca.fit(data)
+
+        print(pca.components_)
+        print(pca.explained_variance_)
+        print(pca.n_components_)
+        print(pca.n_features_)
+
 
     def _gram_schmidt_process(self):
         """ Implement the gram schmidt process on data """
@@ -194,8 +207,7 @@ class GeneratorExtract:
                     continue
 
         if len(temporary_generators) > 2:
-            generator = np.mean(temporary_generators, axis=0)
-            self.generators.append(generator)
+            self.generators.append(temporary_generators)
 
     def _clear_class_state(self):
         """ Reset the class back to its original state """
@@ -219,27 +231,18 @@ class GeneratorExtract:
         6.) Perform PCA to identify relevant generators
         """
 
-        while len(self.generators) < 10:
-            print(len(self.generators))
-            self._perform_PCA()              # 1.) Perform pca on the input data
+        counter = 0
+        while counter < 100:
+            #self._perform_PCA()              # 1.) Perform pca on the input data
             self._build_orthonormal_basis()  # 2.) Build the orthonormal basis
             self._find_hyperplane_points()   # 3.) Fill the hyperplane points array
             self._find_point_pairs()         # 4.) Find all connected points
             self._evaluate_generator()       # 5.) Evaluate generators
             self._clear_class_state()        # Clear class state for next run
+            counter += 1
 
-        print(np.mean(self.generators, axis=0))  # Skip any extra PCA and print me an average
-
-
-
-
-
-
-        
-
-
-
-
-
-
-
+        outcome = []
+        for item in self.generators:
+            for generator in item:
+                outcome.append(generator)
+        self._perform_PCA(np.reshape(outcome, (len(outcome), -1)))
