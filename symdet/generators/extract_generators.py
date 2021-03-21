@@ -24,7 +24,7 @@ class GeneratorExtract:
                         A list of tuple pairs containing points connected by the single action of a generator
     """
 
-    def __init__(self, data_clusters, delta=0.5, epsilon=0.3):
+    def __init__(self, data_clusters: np.array, delta: float = 0.5, epsilon:float = 0.3, hyperplane_dimension: int  = 2):
         """ Python constructor
 
         Parameters
@@ -42,6 +42,7 @@ class GeneratorExtract:
         self.hyperplane_points = []
         self.point_pairs = []
         self.generators = []
+        self.hyperplane_dimension = hyperplane_dimension
 
     @staticmethod
     def _perform_PCA(data):
@@ -144,18 +145,17 @@ class GeneratorExtract:
         """
 
         self._start_gs_method()  # get the first two vectors in the basis set
-        tst_data = [[1, 0], [0, 1]]
-        self._gram_schmidt_process(tst_data)  # perform the Gram-Schmidt process over the rest of the array
+        #self._gram_schmidt_process()  # perform the Gram-Schmidt process over the rest of the array
         self._normalize_basis_set()  # normalize the vectors in the orthogonal basis
 
     def _find_hyperplane_points(self):
         """ Get all points within the hyperplane thickness """
 
-        if len(self.basis) == 2:
+        if len(self.basis) == 0:
             self.hyperplane_points = self.data_clusters
         else:
             for point in self.data_clusters:
-                for basis_vector in self.basis[2:]:
+                for basis_vector in self.basis[1:]:
                     if abs(np.dot(point, basis_vector)) < self.delta:
                         self.hyperplane_points.append(point)
                     else:
@@ -176,8 +176,9 @@ class GeneratorExtract:
     def _sigma_function(self, points):
         """ Get the directional information from points on hyperplane """
 
-        return np.sign(((np.dot(points[0], self.basis[0])) * (np.dot(points[1], self.basis[1]))) -
-                       ((np.dot(points[0], self.basis[1])) * (np.dot(points[1], self.basis[0]))))
+       # return np.sign(((np.dot(points[0], self.basis[0])) * (np.dot(points[1], self.basis[1]))) -
+       #               ((np.dot(points[0], self.basis[1])) * (np.dot(points[1], self.basis[0]))))
+        return np.sign(np.dot(points[0], self.basis[0]) - np.dot(points[0], self.basis[1]))
 
     def _solve_for_generator(self, pair, reference):
         """ Perform regression task on generator equation
@@ -214,10 +215,10 @@ class GeneratorExtract:
 
         temporary_generators = []
         for points in self.point_pairs:
-            for basis in self.basis[2:]:
+            for basis in self.basis[1:]:
                 generator = self._solve_for_generator(points, basis)
                 check = generator * basis
-                for basis_check in self.basis[2:]:
+                for basis_check in self.basis[1:]:
                     check += generator * basis_check
                 condition = []
                 for row in check:
@@ -234,7 +235,7 @@ class GeneratorExtract:
     def _clear_class_state(self):
         """ Reset the class back to its original state """
 
-        self.basis_data = list(np.copy(self.data_clusters))
+        #self.basis_data = list(np.copy(self.data_clusters))
 
         self.basis = []
         self.hyperplane_points = []
@@ -254,7 +255,7 @@ class GeneratorExtract:
         """
 
         counter = 0
-        while counter < 10:
+        while counter < 2:
             # self._perform_PCA()              # 1.) Perform pca on the input data
             self._build_orthonormal_basis()  # 2.) Build the orthonormal basis
             self._find_hyperplane_points()  # 3.) Fill the hyperplane points array
