@@ -19,7 +19,7 @@ def main_clustering():
     """ Main function to study the clustering """
 
     # Instantiate the class and build the training data
-    double_well_potential = Double_Well_Potential([-5, 5], [1 / 5, 1e-3], n_class_members=3000)
+    double_well_potential = Double_Well_Potential([-5, 5], [1 / 5, 1e-3], n_class_members=1000)
     double_well_potential.plot_potential()
     training_data = double_well_potential.build_dataset()
 
