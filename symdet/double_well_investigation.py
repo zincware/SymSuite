@@ -1,18 +1,18 @@
 """ Study of the double well potential """
 
-import numpy as np
-import tensorflow as tf
 import os
-import time
-
-from Exact_Potentials.Double_Well_Potential import Double_Well_Potential
-from Models.dense_model import DenseModel
-from Analysis.model_visualization import Visualizer
-
-from Exact_Potentials.SO2_Data import SO2
-from generators.extract_generators import GeneratorExtract
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+import time
+
+from symdet.exact_potentials.double_well_potential import Double_Well_Potential
+from symdet.models.dense_model import DenseModel
+from symdet.analysis.model_visualization import Visualizer
+
+from symdet.exact_potentials.so2_data import SO2
+from symdet.exact_potentials.so3_data import SO3
+from symdet.generators.generators import GeneratorExtraction
 
 
 def main_clustering():
@@ -48,17 +48,20 @@ def main_generator_extraction():
     We will use a points on a circle example to extract symmetries from there
     """
 
-    data_generator = SO2(n_points=500)  # instantiate the class
+    data_generator = SO2(n_points=200, noise=True)  # instantiate the class
     data_generator.plot_data()  # plot the data
 
-    generator_extractor = GeneratorExtract(data_generator.data, delta=0.5, epsilon=0.3)  # instantiate the class
-    generator_extractor.extract_generators()  # extract the generators
+    sphere = SO3(n_points=500, noise=True)
+    sphere.plot_data()
+
+    generator_extractor = GeneratorExtraction(sphere.data, delta=0.5, epsilon=0.3, candidate_runs=5)
+    generator_extractor.perform_generator_extraction()  # extract the generators
 
 
 if __name__ == "__main__":
     start = time.time()
 
-    #main_clustering()
+    # main_clustering()
     main_generator_extraction()
 
-    print(f"Program ran in {(time.time() - start)/60} minutes")
+    print(f"Program ran in {(time.time() - start) / 60} minutes")

@@ -13,7 +13,7 @@ from tqdm import tqdm
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 
-from .Potential import Potential
+from .potential import Potential
 
 import tensorflow as tf
 
