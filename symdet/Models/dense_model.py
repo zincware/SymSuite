@@ -3,7 +3,6 @@
 import tensorflow as tf
 import numpy as np
 from tensorflow.keras import regularizers
-from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input
 
 

@@ -103,5 +103,5 @@ class Double_Well_Potential(Potential):
             filtered_array = np.random.choice(filtered_array, size=self.n_class_members)
             potential_data[class_keys[i]] = filtered_array
 
-        self.plot_clusters(potential_data, radial_values, function_values)
+        #self.plot_clusters(potential_data, radial_values, function_values)
         return potential_data

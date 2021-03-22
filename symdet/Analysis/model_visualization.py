@@ -25,4 +25,5 @@ class Visualizer:
         plt.scatter(tsne_representation[:, 0], tsne_representation[:, 1],
                     c=self.colour_map, cmap='viridis', vmax=10, vmin=-1)
         plt.colorbar()
+        plt.savefig('pres.pdf', dpi=600)
         plt.show()

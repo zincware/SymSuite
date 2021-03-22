@@ -134,7 +134,6 @@ class GeneratorExtract:
         for vector in data:
             distance = np.linalg.norm
 
-
     def _build_orthonormal_basis(self):
         """ Construct and orthonormal basis
 
@@ -213,20 +212,32 @@ class GeneratorExtract:
         """ Calculate the generator for the given data """
 
         temporary_generators = []
+        # for points in self.point_pairs:
+        #     for basis in self.basis[2:]:
+        #         generator = self._solve_for_generator(points, basis)
+        #         check = generator * basis
+        #         for basis_check in self.basis[2:]:
+        #             check += generator * basis_check
+        #         condition = []
+        #         for row in check:
+        #             if all(v == 0 for v in row):
+        #                 condition.append(True)
+        #         if all(condition):
+        #             temporary_generators.append(generator)
+        #         else:
+        #             continue
+
         for points in self.point_pairs:
-            for basis in self.basis[2:]:
-                generator = self._solve_for_generator(points, basis)
-                check = generator * basis
-                for basis_check in self.basis[2:]:
-                    check += generator * basis_check
-                condition = []
-                for row in check:
-                    if all(v == 0 for v in row):
-                        condition.append(True)
-                if all(condition):
-                    temporary_generators.append(generator)
-                else:
-                    continue
+            point_1 = points[0]
+            point_2 = points[1]
+            distance = point_2 - point_1
+            distance_magnitude = np.linalg.norm(distance)
+            normalization = np.linalg.norm(point_1)
+            sigma = self._sigma_function(points)
+            lhs = (normalization * distance) / (sigma * distance_magnitude)
+            dat = np.linalg.lstsq(lhs, point_1)
+            print(dat)
+            temporary_generators.append(dat)
 
         if len(temporary_generators) > 2:
             self.generators.append(temporary_generators)
