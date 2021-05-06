@@ -8,13 +8,8 @@ Description: A class for the construction and sampling of a double well potentia
 
 import numpy as np
 import matplotlib.pyplot as plt
-import os
 from tqdm import tqdm
-
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
-
 from .potential import Potential
-
 import tensorflow as tf
 
 
@@ -87,7 +82,7 @@ class Double_Well_Potential(Potential):
         plt.xlim(-0.1, 2.0)
         plt.show()
 
-    def build_dataset(self):
+    def build_dataset(self, plot_clusters: bool = False):
         """ Call all methods and build the dataset """
 
         function_values, radial_values = self.get_function_values(self.coordinate_tensor)  # Get the function values
@@ -103,5 +98,6 @@ class Double_Well_Potential(Potential):
             filtered_array = np.random.choice(filtered_array, size=self.n_class_members)
             potential_data[class_keys[i]] = filtered_array
 
-        #self.plot_clusters(potential_data, radial_values, function_values)
+        if plot_clusters:
+            self.plot_clusters(potential_data, radial_values, function_values)
         return potential_data

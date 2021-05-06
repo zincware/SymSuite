@@ -1,11 +1,5 @@
 """ Study of the double well potential """
 
-import os
-
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
-import time
-
 from symdet.exact_potentials.double_well_potential import Double_Well_Potential
 from symdet.models.dense_model import DenseModel
 from symdet.analysis.model_visualization import Visualizer
@@ -54,14 +48,10 @@ def main_generator_extraction():
     sphere = SO3(n_points=500, noise=True)
     sphere.plot_data()
 
-    generator_extractor = GeneratorExtraction(sphere.data, delta=0.5, epsilon=0.3, candidate_runs=5)
+    generator_extractor = GeneratorExtraction(data_generator.data, delta=0.5, epsilon=0.3, candidate_runs=5)
     generator_extractor.perform_generator_extraction()  # extract the generators
 
 
 if __name__ == "__main__":
-    start = time.time()
-
-    # main_clustering()
+    main_clustering()
     main_generator_extraction()
-
-    print(f"Program ran in {(time.time() - start) / 60} minutes")

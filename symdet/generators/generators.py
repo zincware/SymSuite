@@ -2,6 +2,7 @@
 Python module to extract generators from data.
 """
 import os
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
 import numpy as np
@@ -240,18 +241,17 @@ class GeneratorExtraction:
 
         """
         self._simple_regression()
-        print(self.generator_candidates)
         unconstrained_generators = np.array(self.generator_candidates).reshape((len(self.generator_candidates),
-                                                                      self.dimension,
-                                                                      self.dimension))
+                                                                                self.dimension,
+                                                                                self.dimension))
         self.generator_candidates = []
         for generator in unconstrained_generators:
             truth_array = []
             for vector in self.basis[2:]:
-                test = sum(generator*vector)
+                test = sum(generator * vector)
                 truth_array.append(all(abs(test) < 1))
             if all(truth_array):
-                self.generator_candidates.append(np.array(generator).reshape((1, self.dimension*self.dimension)))
+                self.generator_candidates.append(np.array(generator).reshape((1, self.dimension * self.dimension)))
 
     def _simple_regression(self):
         """
@@ -267,13 +267,14 @@ class GeneratorExtraction:
         for pair in self.point_pairs:
             points = [self.hyperplane_set[pair[0]], self.hyperplane_set[pair[1]]]
             sigma = self._compute_sigma(points)
-            Y.append(((points[0] - points[1])*np.linalg.norm(points[0]))/(sigma*np.linalg.norm(points[1] - points[0])))
+            Y.append(
+                ((points[0] - points[1]) * np.linalg.norm(points[0])) / (sigma * np.linalg.norm(points[1] - points[0])))
             X.append(points[0])
 
         top_row = LinearRegression().fit(X, np.array(Y)[:, 0]).coef_
         middle_row = LinearRegression().fit(X, np.array(Y)[:, 1]).coef_
-        bottom_row = LinearRegression().fit(X, np.array(Y)[:, 2]).coef_
-        self.generator_candidates.append(np.concatenate((top_row, middle_row, bottom_row)))
+        # bottom_row = LinearRegression().fit(X, np.array(Y)[:, 2]).coef_
+        self.generator_candidates.append(np.concatenate((top_row, middle_row)))
 
     def _compute_sigma(self, pair):
         """
@@ -282,8 +283,8 @@ class GeneratorExtraction:
         -------
 
         """
-        return np.sign((np.dot(pair[0], self.basis[0])*np.dot(pair[1], self.basis[1])) -
-                       (np.dot(pair[0], self.basis[1])*np.dot(pair[1], self.basis[0])))
+        return np.sign((np.dot(pair[0], self.basis[0]) * np.dot(pair[1], self.basis[1])) -
+                       (np.dot(pair[0], self.basis[1]) * np.dot(pair[1], self.basis[0])))
 
     def _extract_generators(self):
         """
@@ -296,7 +297,7 @@ class GeneratorExtraction:
         pca = PCA(n_components=4)
         pca.fit(self.generator_candidates)
 
-        print(np.sqrt(2)*pca.components_)
+        print(np.sqrt(2) * pca.components_)
         print(pca.explained_variance_ratio_)
 
     def perform_generator_extraction(self):
