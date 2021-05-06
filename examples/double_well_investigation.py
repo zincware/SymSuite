@@ -15,7 +15,7 @@ def main_clustering():
     # Instantiate the class and build the training data
     double_well_potential = Double_Well_Potential([-5, 5], [1 / 5, 1e-3], n_class_members=1000)
     double_well_potential.plot_potential()
-    training_data = double_well_potential.build_dataset()
+    training_data = double_well_potential.build_dataset(plot_clusters=False)
 
     # Build, train, and evaluate the model
     model = DenseModel(training_data,
@@ -48,10 +48,13 @@ def main_generator_extraction():
     sphere = SO3(n_points=500, noise=True)
     sphere.plot_data()
 
-    generator_extractor = GeneratorExtraction(data_generator.data, delta=0.5, epsilon=0.3, candidate_runs=5)
+    generator_extractor = GeneratorExtraction(data_generator.data,
+                                              delta=0.5,
+                                              epsilon=0.3,
+                                              candidate_runs=5)
     generator_extractor.perform_generator_extraction()  # extract the generators
 
 
 if __name__ == "__main__":
-    main_clustering()
+    #main_clustering()
     main_generator_extraction()

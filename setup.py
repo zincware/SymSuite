@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="Hermes",
+    name="SymDet",
     version="0.0.1",
     author="Samuel Tovey",
     author_email="tovey.samuel@gmail.com",
@@ -24,10 +24,7 @@ setuptools.setup(
     ],
     include_package_data=True,
     python_requires='>=3.6',
-    install_requires=['requests',
-                      'numpy',
-                      'h5py',
-                      'pandas',
+    install_requires=['numpy',
                       'nbsphinx',
                       'sphinx_rtd_theme',
                       'sphinx-copybutton'],

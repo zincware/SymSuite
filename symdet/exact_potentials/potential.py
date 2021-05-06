@@ -46,6 +46,7 @@ class Potential:
         self.data_tensor = None
         self.n_class_members = n_class_members
         self.coordinate_tensor = coordinates
+        self._check_input()
 
         for k in np.linspace(k_range[0], k_range[1], 11, dtype=int):
             self.bin_values[f"{k + abs(k_range[0])}"] = [bin_operation[0] * k - bin_operation[1],
