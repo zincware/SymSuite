@@ -8,11 +8,15 @@ from tensorflow.keras.layers import Input
 
 
 class DenseModel:
-    """ Class for the construction and training of a dense NN model """
+    """
+    Class for the construction and training of a dense NN model
+    """
 
     def __init__(self, data_dict, n_layers=5, units=10, epochs=20, activation='relu', monitor='accuracy', lr=1e-4,
                  batch_size=100, terminate_patience=10, lr_patience=5):
-        """ Python constructor """
+        """
+        Python constructor
+        """
         self.data_dict = data_dict
         self.n_layers = n_layers
         self.units = units
@@ -29,7 +33,9 @@ class DenseModel:
         self.model = None
 
     def _shuffle_and_split_data(self):
-        """ shuffle and split the parsed dataset """
+        """
+        shuffle and split the parsed dataset
+        """
 
         for key in self.data_dict:
             labels = tf.repeat(tf.convert_to_tensor(np.array(key, dtype=float)), len(self.data_dict[key]))
@@ -57,7 +63,9 @@ class DenseModel:
         self.train_ds = tf.random.shuffle(self.train_ds)
 
     def _build_model(self):
-        """ Build the ml model """
+        """
+        Build the ml model
+        """
 
         model = tf.keras.Sequential()
         input_layer = Input(shape=[1])
@@ -84,7 +92,9 @@ class DenseModel:
         self.model = model  # Add the model to the class
 
     def _compile_model(self):
-        """ Compile the model """
+        """
+        Compile the model
+        """
 
         # Define the callbacks
         terminating_callback = tf.keras.callbacks.EarlyStopping(monitor=self.monitor,
@@ -100,7 +110,9 @@ class DenseModel:
         return [terminating_callback, reduction_callback]
 
     def train_model(self):
-        """ Collect other methods and train the ML model """
+        """
+        Collect other methods and train the ML model
+        """
 
         self._shuffle_and_split_data()  # Build the datasets
         self._build_model()  # Build the NN model
@@ -121,7 +133,9 @@ class DenseModel:
         return self.train_ds
 
     def _evaluate_model(self):
-        """ Evaluate the tensorflow model on the validation data """
+        """
+        Evaluate the tensorflow model on the validation data
+        """
 
         attributes = self.model.evaluate(x=self.val_ds[:, 0],
                                          y=tf.keras.utils.to_categorical(self.val_ds[:, 1]))
@@ -130,7 +144,19 @@ class DenseModel:
         # self.model.predict
 
     def get_embedding_layer_representation(self, data_array):
-        """ Return the representation constructed by the embedding layer """
+        """
+        Return the representation constructed by the embedding layer
+
+        Parameters
+        ---------
+        data_array : np.array
+                Data on which the model should be applied
+
+        Returns
+        -------
+        predictions : tf.Tensor
+                Predictions on the data_array returned in their high dimensional representation.
+        """
 
         model = tf.keras.Sequential()
         input = Input(shape=[1])
@@ -139,5 +165,4 @@ class DenseModel:
             model.add(layer)
 
         model.build()
-
         return model.predict(data_array)

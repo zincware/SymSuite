@@ -1,15 +1,13 @@
 """
 Python module to extract generators from data.
 """
-import os
-
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
 import numpy as np
 from tqdm import tqdm
 import random
 from sklearn.linear_model import LinearRegression
 from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
 
 
 class GeneratorExtraction:
@@ -70,6 +68,7 @@ class GeneratorExtraction:
     def _get_dimension(self):
         """
         Get the dimension of the points in the point cloud.
+
         Returns
         -------
         dimension : int
@@ -80,9 +79,10 @@ class GeneratorExtraction:
     def _remove_redundancy(self):
         """
         Remove the redundancy in the data with PCA.
+
         Returns
         -------
-
+        Updates the class state.
         Notes
         -----
         Currently not implemented as it is not required.
@@ -95,12 +95,12 @@ class GeneratorExtraction:
 
         Returns
         -------
-
+        Updates the basis set.
         """
         basis = list(self._start_gs())
 
-        basis_candidates = np.zeros((self.dimension, self.dimension))
         if self.dimension > 2:
+            basis_candidates = np.zeros((self.dimension, self.dimension))
             for i, vector in enumerate(basis_candidates):
                 vector[i] = 1
 
@@ -188,7 +188,7 @@ class GeneratorExtraction:
         Build the hyperplane set
         Returns
         -------
-
+        Updates the class state
         """
         if self.dimension == 2:
             self.hyperplane_set = self.point_cloud
@@ -236,9 +236,6 @@ class GeneratorExtraction:
     def _full_regression(self):
         """
         Perform full regression to extract the generators.
-        Returns
-        -------
-
         """
         self._simple_regression()
         unconstrained_generators = np.array(self.generator_candidates).reshape((len(self.generator_candidates),
@@ -257,10 +254,6 @@ class GeneratorExtraction:
         """
         In the case where additional constraints are not needed, we simply perform regression on the problem to
         extract generator candidates.
-
-        Returns
-        -------
-
         """
         Y = []
         X = []
@@ -281,31 +274,44 @@ class GeneratorExtraction:
         compute the directional information about the point pair
         Returns
         -------
-
+        sigma : int
+                A direction measurement used to identify direction information in the basis set.
         """
         return np.sign((np.dot(pair[0], self.basis[0]) * np.dot(pair[1], self.basis[1])) -
                        (np.dot(pair[0], self.basis[1]) * np.dot(pair[1], self.basis[0])))
 
-    def _extract_generators(self):
+    def _extract_generators(self, pca_components: int):
         """
         Perform PCA on candidates and extract true generators.
-        Returns
-        -------
-
         """
-        print(self.generator_candidates)
-        pca = PCA(n_components=4)
+        pca = PCA(n_components=pca_components)
         pca.fit(self.generator_candidates)
 
-        print(np.sqrt(2) * pca.components_)
-        print(pca.explained_variance_ratio_)
+        return np.sqrt(2) * pca.components_, pca.explained_variance_ratio_
 
-    def perform_generator_extraction(self):
+    def _plot_results(self, std_values, save: bool = False):
+        """
+        Plot the results of the analysis.
+        """
+        plt.plot([i for i in range(len(std_values))], std_values, 'o-')
+        plt.xlabel("No. PCA Components")
+        plt.ylabel("Explained Variance (%)")
+        if save:
+            plt.savefig("PCA_STD.svg", dpi=800, format='svg')
+        plt.show()
+
+    def perform_generator_extraction(self, pca_components: int = 4, plot: bool = False, save: bool = False):
         """
         Collect all methods and perform the generator extraction.
-        Returns
-        -------
 
+        Parameters
+        ----------
+        pca_components : int
+                Number of pca components to checked in the reduction.
+        plot : bool
+                If True, the outcomes will be plotted.
+        save : bool
+                If True, and plot is also True, the plots will be saved.
         """
 
         for _ in tqdm(range(self.candidate_runs), ncols=100, desc="Producing generator candidates"):
@@ -315,4 +321,11 @@ class GeneratorExtraction:
             self._identify_point_pairs()
             self._perform_regression()
 
-        self._extract_generators()
+        generators, std_array = self._extract_generators(pca_components=pca_components)
+        for i, item in enumerate(generators):
+            print(f"Principle Component {i + 1}: Explained Variance: {std_array[i]}")
+            print(item.reshape((self.dimension, self.dimension)))
+            print("\n")
+
+        if plot:
+            self._plot_results(std_array, save=save)
