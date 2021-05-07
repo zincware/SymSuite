@@ -26,6 +26,8 @@ setuptools.setup(
     python_requires='>=3.6',
     install_requires=['numpy',
                       'nbsphinx',
+                      'tensorflow',
+                      'sklearn',
                       'sphinx_rtd_theme',
                       'sphinx-copybutton'],
 )

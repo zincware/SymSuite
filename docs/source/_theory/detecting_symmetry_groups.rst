@@ -1,0 +1,2 @@
+Detecting Symmetry Groups
+=========================

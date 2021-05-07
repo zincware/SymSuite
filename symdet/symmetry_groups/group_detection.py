@@ -7,6 +7,7 @@ from symdet.analysis.model_visualization import Visualizer
 import tensorflow as tf
 from typing import Tuple
 
+
 class GroupDetection:
     """
     A class to cluster raw data into symmetry groups.
@@ -22,6 +23,7 @@ class GroupDetection:
     def __init__(self, model: DenseModel, cluster: DataCluster):
         """
         Constructor for the GroupDetection class.
+
         Parameters
         ----------
         model : DenseModel
@@ -32,13 +34,13 @@ class GroupDetection:
         self.model = model
         self.cluster = cluster
 
-    def _get_model_predictions(self) -> Tuple[tf.Tensor, tf.Tensor]:
+    def _get_model_predictions(self) -> Tuple:
         """
         Train the attached model.
 
         Returns
         -------
-        model_predictions : tf.Tensor
+        model_predictions : Tuple
                 Embedding layer of the NN on validation data.
         """
         validation_data = self.model.train_model()
@@ -69,9 +71,16 @@ class GroupDetection:
     def run_symmetry_detection(self, plot: bool = True, save: bool = False):
         """
         Run the symmetry detection routine.
+
+        Parameters
+        ----------
+        plot : bool
+                Plot the TSNE visualization.
+        save : bool
+                Save the image plotted.
         Returns
         -------
-
+        None
         """
         validation_data, predictions = self._get_model_predictions()
         colour_map, clusters, visualization_data = self.cluster._cluster_data(predictions, validation_data)
@@ -79,4 +88,3 @@ class GroupDetection:
 
         visualizer = Visualizer(representation, colour_map)
         naive_clusters = visualizer.tsne_visualization(plot=plot, save=save)
-

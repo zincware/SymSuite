@@ -38,7 +38,7 @@ class GeneratorExtraction:
     generator_candidates : list
             Generator candidates on which to perform PCA.
     constrained_generators : np.ndarray:
-            Constained generator condidates.
+            Constrained generator candidates.
     """
 
     def __init__(self, point_cloud: tf.Tensor, delta: float = 0.5, epsilon: float = 0.3, candidate_runs: int = 10):
@@ -99,7 +99,7 @@ class GeneratorExtraction:
 
         Returns
         -------
-        Updates the basis set.
+        Updates the basis set and enforces a check.
         """
         basis = list(self._start_gs())
 
@@ -117,9 +117,12 @@ class GeneratorExtraction:
     def _gs_check(self):
         """
         Check to see that all basis vectors are orthogonal to one another.
+
+        If this assert fails, the session will end.
+
         Returns
         -------
-
+        Will throw an exception if the assert fails.
         """
         for basis in self.basis:
             np.testing.assert_almost_equal(np.linalg.norm(basis), 1)
@@ -128,7 +131,7 @@ class GeneratorExtraction:
                     continue
                 np.testing.assert_almost_equal(np.dot(basis, test), 0)
 
-    def _perform_gs(self, vector: list, basis_set: list):
+    def _perform_gs(self, vector: list, basis_set: list) -> np.ndarray:
         """
         Perform the Gram-Schmidt orthogonalization procedure.
 
@@ -149,7 +152,7 @@ class GeneratorExtraction:
 
         return basis_vector / np.linalg.norm(basis_vector)
 
-    def _eliminate_closest_vector(self, reference_vectors: list, test_vectors: list):
+    def _eliminate_closest_vector(self, reference_vectors: list, test_vectors: list) -> np.ndarray:
         """
         Remove the closest vectors in the theoretical basis set
 
@@ -161,7 +164,8 @@ class GeneratorExtraction:
                 Vectors to test against
         Returns
         -------
-
+        basis_vectors : np.ndarray
+                Returns the basis vectors which minimizes the sum of squares of the scalar product.
         """
         distances = []
         for vector in test_vectors:
@@ -171,7 +175,7 @@ class GeneratorExtraction:
 
         return np.array(test_vectors)[np.argsort(distances)][:int(self.dimension - 2)]
 
-    def _start_gs(self):
+    def _start_gs(self) -> Tuple[np.ndarray, np.ndarray]:
         """
         Pick the two first random basis vectors.
 
@@ -190,19 +194,21 @@ class GeneratorExtraction:
         return vector_1, vector_2
 
     @staticmethod
-    def _projection_operator(u, v):
+    def _projection_operator(u, v) -> np.ndarray:
         """
         Perform the projection of u onto v.
 
         Returns
         -------
-
+        proj_{u}(v) : np.ndarray
+                Returns the projection of u on v. This is required for the Gram-Schmidt process.
         """
         return (np.dot(u, v) / np.dot(u, u)) * u
 
     def _construct_hyperplane_set(self):
         """
-        Build the hyperplane set
+        Build the hyperplane set.
+
         Returns
         -------
         Updates the class state
@@ -222,10 +228,11 @@ class GeneratorExtraction:
 
     def _identify_point_pairs(self):
         """
-        Identify point pairs within the hyperplane set
+        Identify point pairs within the hyperplane set.
+
         Returns
         -------
-
+        Updates the class state.
         """
         self.point_pairs = []
         for index, origin in enumerate(self.hyperplane_set):
@@ -241,9 +248,10 @@ class GeneratorExtraction:
     def _perform_regression(self):
         """
         Perform regression on the point pairs and extract generator candidates.
+
         Returns
         -------
-
+        Updates the class state.
         """
         self._simple_regression()
 
@@ -270,6 +278,10 @@ class GeneratorExtraction:
     def _full_regression(self):
         """
         Perform full regression to extract the generators.
+
+        Returns
+        -------
+        Updates the class state.
         """
         self._simple_regression()
         unconstrained_generators = np.array(self.generator_candidates).reshape((len(self.generator_candidates),
@@ -288,6 +300,10 @@ class GeneratorExtraction:
         """
         In the case where additional constraints are not needed, we simply perform regression on the problem to
         extract generator candidates.
+
+        Returns
+        -------
+        Updates the class state.
         """
         Y = []
         X = []
@@ -304,9 +320,14 @@ class GeneratorExtraction:
 
         self.generator_candidates.append(generator)
 
-    def _compute_sigma(self, pair):
+    def _compute_sigma(self, pair) -> int:
         """
-        compute the directional information about the point pair
+        Compute the directional information about the point pair.
+
+        Parameters
+        ----------
+        pair : list
+                A point pair from the point cloud.
         Returns
         -------
         sigma : int
@@ -315,9 +336,21 @@ class GeneratorExtraction:
         return np.sign((np.dot(pair[0], self.basis[0]) * np.dot(pair[1], self.basis[1])) -
                        (np.dot(pair[0], self.basis[1]) * np.dot(pair[1], self.basis[0])))
 
-    def _extract_generators(self, pca_components: int):
+    def _extract_generators(self, pca_components: int) -> Tuple:
         """
         Perform PCA on candidates and extract true generators.
+
+        Parameters
+        ----------
+        pca_components : int
+                Number of pca components to use.
+
+        Returns
+        -------
+        pca_components : list
+                pca components.
+        variance : list
+                The explained variance list.
         """
         if self.dimension > 2:
             pca = PCA(n_components=pca_components)
@@ -326,11 +359,22 @@ class GeneratorExtraction:
         pca = PCA(n_components=pca_components)
         pca.fit(self.generator_candidates)
 
-        return pca.components_, pca.explained_variance_ratio_
+        return np.sqrt(self.dimension)*pca.components_, pca.explained_variance_ratio_
 
     def _plot_results(self, std_values, save: bool = False):
         """
         Plot the results of the analysis.
+
+        Parameters
+        ----------
+        std_values : list
+                explained variance list to be plotted.
+        save : bool
+                If true, the plot will be saved.
+
+        Returns
+        -------
+        Plots and image and saves it if required.
         """
         plt.plot([i for i in range(len(std_values))], std_values, 'o-')
         plt.xlabel("No. PCA Components")
@@ -354,6 +398,13 @@ class GeneratorExtraction:
                 If True, the outcomes will be plotted.
         save : bool
                 If True, and plot is also True, the plots will be saved.
+
+        Returns
+        -------
+        generators : list
+                Return a list of generators.
+        std_array : list
+                explained variance list.
         """
 
         for _ in tqdm(range(self.candidate_runs), ncols=100, desc="Producing generator candidates"):

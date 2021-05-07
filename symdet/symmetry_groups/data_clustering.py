@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import tensorflow as tf
+from typing import Tuple
 
 
 class DataCluster:
@@ -16,7 +17,8 @@ class DataCluster:
     Attributes
     ----------
     input_data: np.array
-            Data to be clustered.
+            Data to be clustered.This should be in an (n, d) shape array where n is the number of points and d is
+            the dimension of the data. For 2 dimensional data this would be simple (x, y) coordinates.
     """
 
     def __init__(self, data: np.array):
@@ -32,9 +34,19 @@ class DataCluster:
         self.input_data = data
 
     @staticmethod
-    def _count_bins(data):
+    def _count_bins(data: np.ndarray) -> list:
         """
         Count how many members are in a representative class.
+
+        Parameters
+        ----------
+        data : np.ndarray
+                An array of class inputs to be summed over to ensure a correct number of class representatives.
+
+        Returns
+        --------
+        summed_array : list
+                A list of class members.
         """
         summed_array = []
         for cls in data:
@@ -43,14 +55,23 @@ class DataCluster:
         return summed_array
 
     @staticmethod
-    def _build_condlist(data: np.array, bin_values: dict):
+    def _build_condlist(data: np.array, bin_values: dict) -> Tuple:
         """
         Build the condition list for the piecewise implementation.
 
         Parameters
         ----------
         data : np.array
+                Data on which to apply conditions.
         bin_values : np.array
+                Bin numbers for the constraint.
+                
+        Returns
+        -------
+        conditions : list
+                These are conditions applied to the data.
+        classes : list
+                Class keys.
         """
 
         conditions = []
@@ -62,9 +83,25 @@ class DataCluster:
         return conditions, classes
 
     @staticmethod
-    def _cluster_data(predictions, training_data):
+    def _cluster_data(predictions: np.ndarray, training_data: np.ndarray) -> Tuple:
         """
         Cluster data by the norm of the potential at the minimum
+
+        Parameters
+        ----------
+        predictions : np.ndarray
+                Predictions of the model at test radii.
+        training_data : np.ndarray
+                Data used in the training.
+
+        Returns
+        -------
+        colour_classes : np.ndarray
+                Classes used to map colours to data points.
+        correlated_classes : np.ndarray
+                array of classes which are correlated to one another.
+        visualization_data : np.ndarray
+                data to be used in the TSNE visualization.
         """
 
         correlated_classes = np.zeros(len(predictions))
@@ -90,21 +127,28 @@ class DataCluster:
 
         return colour_classes, correlated_classes, visualization_data
 
-    def _function_to_bins(self, function_values, bin_values: dict):
+    def _function_to_bins(self, function_values: np.ndarray, bin_values: dict) -> list:
         """
         Sort function values into bins.
 
         Parameters
         ----------
         function_values : np.array
+                Function values corresponding to radii values.
         bin_values : dict
+                bin dictionary where keys are the class numbers.
+
+        Returns
+        -------
+        conditions : list
+                Conditions from the condlist build.
         """
 
         conditions, functions = self._build_condlist(function_values, bin_values)
 
         return conditions
 
-    def plot_clusters(self, data, save: bool = False):
+    def plot_clusters(self, data: dict, save: bool = False):
         """
         Plot the clustered data on the raw.
 
@@ -140,7 +184,7 @@ class DataCluster:
         plt.show()
 
     def range_binning(self, value_range: list, bin_operation: list, axis: int = 1, representatives: int = 100,
-                      plot: bool = False, save_plot: bool = False):
+                      plot: bool = False, save_plot: bool = False) -> dict:
         """
         A method to apply simple range binning to some data.
 
@@ -173,8 +217,8 @@ class DataCluster:
         bin_count = self._count_bins(bin_masks)
         if all(bin_count) > representatives is False:
             print("Not enough data, please provide more")
-        class_keys = list(bin_values.keys())  # Get the keys for the class
-        potential_data = {}  # Instantiate dictionary to store the data
+        class_keys = list(bin_values.keys())
+        potential_data = {}
         for i in range(len(class_keys)):
             filtered_array = self.input_data[:, 0] * bin_masks[i]
             filtered_array = filtered_array[filtered_array != 0]

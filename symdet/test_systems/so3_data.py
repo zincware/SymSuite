@@ -50,7 +50,7 @@ class SO3:
 
         Returns
         -------
-
+        Updates the class state.
         """
         if self.noise:
             self.radius = np.random.uniform(self.radius - self.variance, self.radius + self.variance, self.n_points)
@@ -69,7 +69,7 @@ class SO3:
         Plot the sphere data.
         Returns
         -------
-
+        Plots and saves an image.
         """
         if self.data is None:
             self.generate_data()

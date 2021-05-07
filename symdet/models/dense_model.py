@@ -1,4 +1,6 @@
-""" Dense neural network model """
+"""
+Dense neural network model
+"""
 
 import tensorflow as tf
 import numpy as np
@@ -10,12 +12,69 @@ from tensorflow.keras.layers import Input
 class DenseModel:
     """
     Class for the construction and training of a dense NN model
+
+    Attributes
+    ----------
+    data_dict : dict
+            Dictionary of data where the key is the class name and the values are the coordinates belongin to that
+            class. This is fundamentall a classification problem!
+    n_layers : int
+            Number of hidden layers to use.
+    units : int
+            Number of units to use in each layer.
+    epochs : int
+            Number of epochs during training.
+    activation : str
+            Activation function to use.
+    monitor : str
+            Monitor parameter for use in training.
+    lr : float
+            Learning rate of the algorithm.
+    batch_size : int
+            batch size for the training.
+    terminate_patience : int
+            Patience value for termination to be used in a callback.
+    lr_patience : int
+            Patience in the learning rate reduction.
+    train_ds : tf.data.Dataset
+            Train dataset.
+    test_ds : tf.data.Dataset
+            Test dataset.
+    val_ds : tf.data.Dataset
+            validation dataset.
+    model : tf.keras.Model
+            Tensorflow model to train.
     """
 
-    def __init__(self, data_dict, n_layers=5, units=10, epochs=20, activation='relu', monitor='accuracy', lr=1e-4,
-                 batch_size=100, terminate_patience=10, lr_patience=5):
+    def __init__(self, data_dict: dict, n_layers: int = 5, units: int = 10, epochs: int = 20, activation: str = 'relu',
+                 monitor: str = 'accuracy', lr: float = 1e-4, batch_size: int = 100, terminate_patience: int = 10,
+                 lr_patience: int = 5):
         """
         Python constructor
+
+        Parameters
+        ----------
+        data_dict : dict
+                Dictionary of data where the key is the class name and the values are the coordinates belongin to that
+                class. This is fundamentally a classification problem!
+        n_layers : int
+                Number of hidden layers to use.
+        units : int
+                Number of units to use in each layer.
+        epochs : int
+                Number of epochs during training.
+        activation : str
+                Activation function to use.
+        monitor : str
+                Monitor parameter for use in training.
+        lr : float
+                Learning rate of the algorithm.
+        batch_size : int
+                batch size for the training.
+        terminate_patience : int
+                Patience value for termination to be used in a callback.
+        lr_patience : int
+                Patience in the learning rate reduction.
         """
         self.data_dict = data_dict
         self.n_layers = n_layers
@@ -35,6 +94,10 @@ class DenseModel:
     def _shuffle_and_split_data(self):
         """
         shuffle and split the parsed dataset
+
+        Returns
+        -------
+        Updates the class state.
         """
 
         for key in self.data_dict:
@@ -65,6 +128,10 @@ class DenseModel:
     def _build_model(self):
         """
         Build the ml model
+
+        Returns
+        -------
+        Updates the class state.
         """
 
         model = tf.keras.Sequential()
@@ -91,9 +158,14 @@ class DenseModel:
 
         self.model = model  # Add the model to the class
 
-    def _compile_model(self):
+    def _compile_model(self) -> list:
         """
         Compile the model
+
+        Returns
+        -------
+        callback_list : list
+                A list of model callbacks to be applied during training.
         """
 
         # Define the callbacks
@@ -109,9 +181,14 @@ class DenseModel:
 
         return [terminating_callback, reduction_callback]
 
-    def train_model(self):
+    def train_model(self) -> tf.data.Dataset:
         """
         Collect other methods and train the ML model
+
+        Returns
+        -------
+        train_ds : tf.data.Dataset
+                the training data set. Should be changed perhaps to the validation but this is not essential.
         """
 
         self._shuffle_and_split_data()  # Build the datasets
@@ -120,7 +197,6 @@ class DenseModel:
         print(self.model.summary())  # Print a model summary
 
         # Train the model
-
         for i in range(1, 6):
             self.model.fit(x=self.train_ds[:, 0],
                            y=tf.keras.utils.to_categorical(self.train_ds[:, 1]),
@@ -135,15 +211,18 @@ class DenseModel:
     def _evaluate_model(self):
         """
         Evaluate the tensorflow model on the validation data
+
+        Returns
+        -------
+        Prints the model evaluation.
         """
 
         attributes = self.model.evaluate(x=self.val_ds[:, 0],
                                          y=tf.keras.utils.to_categorical(self.val_ds[:, 1]))
         print(f"Loss: {attributes[0]} \n"
               f"Accuracy: {attributes[1]}")
-        # self.model.predict
 
-    def get_embedding_layer_representation(self, data_array):
+    def get_embedding_layer_representation(self, data_array: np.ndarray) -> tf.Tensor:
         """
         Return the representation constructed by the embedding layer
 
@@ -159,8 +238,8 @@ class DenseModel:
         """
 
         model = tf.keras.Sequential()
-        input = Input(shape=[1])
-        model.add(input)
+        input_data = Input(shape=[1])
+        model.add(input_data)
         for layer in self.model.layers[:-1]:
             model.add(layer)
 

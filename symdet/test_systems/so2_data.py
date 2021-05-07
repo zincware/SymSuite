@@ -72,6 +72,10 @@ class SO2:
     def plot_data(self, save: bool = False):
         """
         Plot the data
+
+        Returns
+        -------
+        plots and saves an image.
         """
 
         if self.data is None:
