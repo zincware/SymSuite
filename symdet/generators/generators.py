@@ -8,6 +8,7 @@ import random
 from sklearn.linear_model import LinearRegression
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
+from typing import Tuple
 
 
 class GeneratorExtraction:
@@ -36,6 +37,8 @@ class GeneratorExtraction:
             Dimensionality of the points.
     generator_candidates : list
             Generator candidates on which to perform PCA.
+    constrained_generators : np.ndarray:
+            Constained generator condidates.
     """
 
     def __init__(self, point_cloud: tf.Tensor, delta: float = 0.5, epsilon: float = 0.3, candidate_runs: int = 10):
@@ -64,6 +67,7 @@ class GeneratorExtraction:
         self.dimension = self._get_dimension()
 
         self.generator_candidates = []
+        self.constrained_generators = []
 
     def _get_dimension(self):
         """
@@ -103,13 +107,26 @@ class GeneratorExtraction:
             basis_candidates = np.zeros((self.dimension, self.dimension))
             for i, vector in enumerate(basis_candidates):
                 vector[i] = 1
-
             reduced_candidates = self._eliminate_closest_vector(basis, list(basis_candidates))
-
             for item in reduced_candidates:
                 basis.append(self._perform_gs(item, basis))
 
         self.basis = tf.convert_to_tensor(basis)  # set the class attribute
+        self._gs_check()
+
+    def _gs_check(self):
+        """
+        Check to see that all basis vectors are orthogonal to one another.
+        Returns
+        -------
+
+        """
+        for basis in self.basis:
+            np.testing.assert_almost_equal(np.linalg.norm(basis), 1)
+            for test in self.basis:
+                if all(test == basis):
+                    continue
+                np.testing.assert_almost_equal(np.dot(basis, test), 0)
 
     def _perform_gs(self, vector: list, basis_set: list):
         """
@@ -146,13 +163,13 @@ class GeneratorExtraction:
         -------
 
         """
-        inv_distances = []
+        distances = []
         for vector in test_vectors:
-            d_1 = np.linalg.norm(vector - reference_vectors[0])
-            d_2 = np.linalg.norm(vector - reference_vectors[1])
-            inv_distances.append(np.mean([1 / d_1, 1 / d_2]))
+            d_1 = np.dot(vector, reference_vectors[0])
+            d_2 = np.dot(vector, reference_vectors[1])
+            distances.append(d_1**2 + d_2**2)
 
-        return np.array(test_vectors)[np.argsort(inv_distances)[:int(self.dimension - 2)]]
+        return np.array(test_vectors)[np.argsort(distances)][:int(self.dimension - 2)]
 
     def _start_gs(self):
         """
@@ -228,10 +245,27 @@ class GeneratorExtraction:
         -------
 
         """
-        if self.dimension == 2:
-            self._simple_regression()
-        else:
-            self._full_regression()
+        self._simple_regression()
+
+        if self.dimension > 2:
+            self._constrain_generators()
+
+    def _constrain_generators(self):
+        """
+        If the dimension is greater than 2, the generators should be constrained by Equation 15 in the referenced paper.
+
+        Returns
+        -------
+        Updates the class.
+        """
+        for generator in self.generator_candidates:
+            outcome = []
+            for basis in self.basis[2:]:
+                data = np.matmul(generator.reshape(self.dimension, self.dimension), basis)
+                outcome = np.concatenate((outcome, data))
+
+            if np.allclose(outcome, [0 for _ in range(len(outcome))], atol=1):
+                self.constrained_generators.append(generator)
 
     def _full_regression(self):
         """
@@ -264,10 +298,11 @@ class GeneratorExtraction:
                 ((points[0] - points[1]) * np.linalg.norm(points[0])) / (sigma * np.linalg.norm(points[1] - points[0])))
             X.append(points[0])
 
-        top_row = LinearRegression().fit(X, np.array(Y)[:, 0]).coef_
-        middle_row = LinearRegression().fit(X, np.array(Y)[:, 1]).coef_
-        # bottom_row = LinearRegression().fit(X, np.array(Y)[:, 2]).coef_
-        self.generator_candidates.append(np.concatenate((top_row, middle_row)))
+        generator = []
+        for i in range(self.dimension):
+            generator = np.concatenate((generator,  LinearRegression().fit(X, np.array(Y)[:, i]).coef_))
+
+        self.generator_candidates.append(generator)
 
     def _compute_sigma(self, pair):
         """
@@ -284,10 +319,14 @@ class GeneratorExtraction:
         """
         Perform PCA on candidates and extract true generators.
         """
+        if self.dimension > 2:
+            pca = PCA(n_components=pca_components)
+            pca.fit(self.constrained_generators)
+
         pca = PCA(n_components=pca_components)
         pca.fit(self.generator_candidates)
 
-        return np.sqrt(2) * pca.components_, pca.explained_variance_ratio_
+        return pca.components_, pca.explained_variance_ratio_
 
     def _plot_results(self, std_values, save: bool = False):
         """
@@ -296,11 +335,14 @@ class GeneratorExtraction:
         plt.plot([i for i in range(len(std_values))], std_values, 'o-')
         plt.xlabel("No. PCA Components")
         plt.ylabel("Explained Variance (%)")
+        plt.xticks(np.arange(len(std_values)), [i + 1 for i in range(len(std_values))])
+        plt.xlim(-0.1, len(std_values) - 0.9)
+        plt.ylim(-0.1, 1.1)
         if save:
             plt.savefig("PCA_STD.svg", dpi=800, format='svg')
         plt.show()
 
-    def perform_generator_extraction(self, pca_components: int = 4, plot: bool = False, save: bool = False):
+    def perform_generator_extraction(self, pca_components: int = 4, plot: bool = False, save: bool = False) -> Tuple:
         """
         Collect all methods and perform the generator extraction.
 
@@ -329,3 +371,5 @@ class GeneratorExtraction:
 
         if plot:
             self._plot_results(std_array, save=save)
+
+        return generators, std_array

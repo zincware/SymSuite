@@ -1,4 +1,6 @@
-""" Class to generate data for the SO(2) group """
+"""
+Class to generate data for the SO(2) group
+"""
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -6,7 +8,24 @@ import matplotlib.pyplot as plt
 
 class SO2:
     """
-    Class for generating SO(2) data """
+    Class for generating SO(2) data.
+
+    Attributes
+    ----------
+    n_points : int
+            Number of points to be generated.
+    radius : float
+            Radius of the circle on which to generate points.
+    noise : bool
+            Parameter to decide if noise should be added to the generated signal.
+    variance : float
+            Variance in the noise.
+    theta : np.ndarray
+            theta values as a numpy array
+    data : np.ndarray
+            x, y coordinate data of points on the circle. shape=(n_points, 2)
+
+    """
 
     def __init__(self, n_points: int = 100, radius: float = 1, noise: bool = False, variance: float = 0.05):
         """
@@ -15,11 +34,11 @@ class SO2:
         Parameters
         ----------
         n_points : int
-                Number of points to be generated
+                Number of points to be generated.
         radius : float
                 Radius of the circle on which to generate points.
         noise : bool
-                Parameter to decide if noise should be added to the generated signal
+                Parameter to decide if noise should be added to the generated signal.
         variance : float
                 Variance in the noise.
         """
@@ -59,6 +78,8 @@ class SO2:
             self.generate_data()  # generate the data
 
         plt.plot(self.data[:, 0], self.data[:, 1], 'k.')
+        plt.xlabel('x')
+        plt.ylabel('y')
         plt.xlim(-1.5, 1.5)
         plt.ylim(-1.5, 1.5)
         plt.axis('equal')

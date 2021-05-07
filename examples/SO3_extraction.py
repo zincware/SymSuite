@@ -1,5 +1,5 @@
 """
-Python module to show generator extraction of SO(2) Lie algebra generators.
+Python module to show generator extraction of SO(3) Lie algebra generators.
 """
 
 from symdet.test_systems.so2_data import SO2
@@ -18,12 +18,12 @@ def generator_extraction():
     4.) Perform the generator extraction.
     """
 
-    circle = SO2(n_points=200,
+    sphere = SO3(n_points=1000,
                  noise=True,
                  variance=0.05)
-    circle.plot_data()
+    sphere.plot_data()
 
-    generator_extractor = GeneratorExtraction(circle.data,       # clustered data
+    generator_extractor = GeneratorExtraction(sphere.data,       # clustered data
                                               delta=0.5,         # distance of points to hyperplane
                                               epsilon=0.3,       # distance between points connected by a generator
                                               candidate_runs=9)  # Number of times to run the extraction loop

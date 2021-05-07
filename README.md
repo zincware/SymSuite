@@ -4,6 +4,10 @@ A python package to perform symmetry detection and generator extraction on raw d
 Krippendorf and Marc Syvaeri on 
 [Detecting symmetries with neural networks](https://iopscience.iop.org/article/10.1088/2632-2153/abbd2d).
 
+### Notes
+This project is under heavy development and is therefore not available on PyPi. I would not expect major API breaks but
+certainly addition of functionality. 
+
 ### Installation
 Currently it is only possible to install SymDet from source and it will remain like this until it has been thoroughly
 tested on experimental data and a larger number of symmetry groups.
