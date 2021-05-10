@@ -4,7 +4,6 @@ Cluster raw data into symmetry groups
 from symdet.models.dense_model import DenseModel
 from symdet.symmetry_groups.data_clustering import DataCluster
 from symdet.analysis.model_visualization import Visualizer
-import tensorflow as tf
 from typing import Tuple
 
 

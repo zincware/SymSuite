@@ -19,9 +19,9 @@ generated in this representation.
 
 At the moment the code can perform the following tasks.
 
-1.) Use a dense neural network to construct a tSNE representation to visually identify symmetry groups.
-2.) Fit generators of symmetry groups using given point cloud data. I can only confirm the accuracy of this fitting
-for two dimensional data but am working to extend this to arbitrary systems.
+1. Use a dense neural network to construct a tSNE representation to visually identify symmetry groups.
+2. Fit generators of symmetry groups using given point cloud data. I can only confirm the accuracy of this fitting
+   for two dimensional data but am working to extend this to arbitrary systems.
 
 More work will be done to bridge these two processes in the hope that a pipeline from raw data to generators can be
 formed.

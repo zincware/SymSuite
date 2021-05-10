@@ -1,2 +1,5 @@
-.. autoclass:: symdet.test_systems.double_well_potential.SO3
+SO(3) Data
+==========
+
+.. autoclass:: symdet.test_systems.so3_data.SO3
     :members:

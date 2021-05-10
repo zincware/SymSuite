@@ -7,7 +7,7 @@ running.
 .. toctree::
    :maxdepth: 1
 
-    _theory/lie_generators
-    _theory/tsne
-    _theory/detecting_symmetry_groups
-    _theory/extracting_generators
+   _theory/lie_generators
+   _theory/tsne
+   _theory/detecting_symmetry_groups
+   _theory/extracting_generators
