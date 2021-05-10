@@ -32,9 +32,8 @@ pip3 install .
 
 #### Documentation
 
-There is a live version of the documentation hosted at 
-[https://symdet.readthedocs.io/en/latest/](https://symdet.readthedocs.io/en/latest/). Alternatively you can build it 
-from source using
+There is a live version of the documentation hosted [here](https://symdet.readthedocs.io/en/latest/). Alternatively you 
+can build it from source using
 
 ```bash
 cd Symdet/docs
