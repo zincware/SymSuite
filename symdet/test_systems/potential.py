@@ -1,4 +1,21 @@
 """
+This file is part of the SymDet distribution (https://github.com/SamTov/SymDet).
+Copyright (c) 2021 Samuel Tovey.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, version 3.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+"""
+
+"""
 Author: Samuel Tovey
 Contact: stovey@icp.uni-stuttgart.de ; tovey.samuel@gmail.com
 Affiliation: Institute for Computational Physics, University of Stuttgart, Stuttgart, Germany
@@ -6,7 +23,6 @@ Affiliation: Institute for Computational Physics, University of Stuttgart, Stutt
 Description: A parent class for the construction and sampling of an arbitray potential
 """
 
-import numpy as np
 import tensorflow as tf
 
 
