@@ -1,5 +1,5 @@
 Potential
 =========
 
-.. autoclass:: symdet.test_systems.double_well_potential.Potential
+.. autoclass:: symdet.test_systems.potential.Potential
     :members:

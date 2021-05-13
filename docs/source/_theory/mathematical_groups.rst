@@ -90,15 +90,15 @@ illustrate the idea we will stick some examples. Let's define two matrices A, an
 
 .. math::
 
-    A = \begin{matrix} 0 & -1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 0 \end{matrix} \\
-    B = \begin{matrix} 0 & 0 & 1 \\ 0 & 0 & 0 \\ -1 & 0 & 0 \end{matrix}
+    A = \begin{pmatrix} 0 & -1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix} \\ \\
+    B = \begin{pmatrix} 0 & 0 & 1 \\ 0 & 0 & 0 \\ -1 & 0 & 0 \end{pmatrix}
 
 Now take a vector :math:`\mathbf{r} = [1, 1, 1]` and let's apply these matrices in different orders and see what
 comes out.
 
 .. math::
-    A \circ B \mathbf{x} = \begin{matrix} 0 & 1 & 0 \end{matrix} \\
-    B \circ A \mathbf{x} = \begin{matrix} 0 & 0 & 1 \end{matrix}
+    A \circ B \mathbf{x} = \begin{pmatrix} 0 \\ 1 \\ 0 \end{pmatrix} \\ \\
+    B \circ A \mathbf{x} = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix}
 
 Essentially this boils down to :math:`A\circ B \neq B\circ A`. In mathematical jargon we would say that A does not
 commute with B. This is quite common, particularly with matrices as in general, matrix multiplication is not
