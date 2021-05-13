@@ -12,9 +12,9 @@ Krippendorf and Marc Syvaeri on
 
 The main idea behind this method is twofold.
 
-1.) The embedding layer of a neural network holds within it an encoded representation from which symmetries in data
+1. The embedding layer of a neural network holds within it an encoded representation from which symmetries in data
 can be studied.
-2.) By formulating the problem as regression, one can extract the generators of the Lie algebra from the point clouds
+2. By formulating the problem as regression, one can extract the generators of the Lie algebra from the point clouds
 generated in this representation.
 
 At the moment the code can perform the following tasks.

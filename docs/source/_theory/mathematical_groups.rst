@@ -125,3 +125,6 @@ we can then use all the information and properties of Lie groups as mathematical
 it a vastly simplified summary, the benefit of identifying and understanding Lie groups. On a mathematical level, the
 benefits of Lie groups arise mostly in their underlying algebra, and so I will leave it to the algebra section to
 outline these.
+
+References
+**********
