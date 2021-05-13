@@ -8,6 +8,8 @@ running.
    :maxdepth: 1
 
    _theory/mathematical_groups
+   _theory/manifold
+   _theory/algebra
    _theory/tsne
    _theory/detecting_symmetry_groups
    _theory/extracting_generators
