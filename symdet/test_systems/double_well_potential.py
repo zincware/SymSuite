@@ -21,7 +21,7 @@ A class for the construction and sampling of a double well potential.
 
 import numpy as np
 import matplotlib.pyplot as plt
-from symdet.potential import Potential
+from symdet.test_systems.potential import Potential
 import tensorflow as tf
 
 

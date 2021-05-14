@@ -20,14 +20,15 @@ Author: Samuel Tovey
 Contact: stovey@icp.uni-stuttgart.de ; tovey.samuel@gmail.com
 Affiliation: Institute for Computational Physics, University of Stuttgart, Stuttgart, Germany
 
-Description: A parent class for the construction and sampling of an arbitray potential
+Description: A parent class for the construction and sampling of an arbitrary potential
 """
 
 import tensorflow as tf
 
 
 class Potential:
-    """ Parent class for potentials
+    """
+    Parent class for potentials
 
     Attributes
     ----------
