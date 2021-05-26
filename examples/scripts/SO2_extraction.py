@@ -4,7 +4,7 @@ Python module to show generator extraction of SO(2) Lie algebra generators.
 
 from symdet.test_systems.so2_data import SO2
 from symdet.generators.generators import GeneratorExtraction
-
+import numpy as np
 
 def generator_extraction():
     """
@@ -17,7 +17,7 @@ def generator_extraction():
     4.) Perform the generator extraction.
     """
 
-    circle = SO2(n_points=200,
+    circle = SO2(n_points=50,
                  noise=True,
                  variance=0.05)
     circle.plot_data()
@@ -28,7 +28,7 @@ def generator_extraction():
                                               candidate_runs=5)  # Number of times to run the extraction loop
     generators, variance_list = generator_extractor.perform_generator_extraction(pca_components=4,
                                                                                  plot=True)
-
+    print(generators[0])
 
 if __name__ == "__main__":
     generator_extraction()
