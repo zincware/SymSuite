@@ -13,16 +13,11 @@ General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-"""
 
+Potential
+=========
+A parent class for the construction and sampling of an arbitrary potential
 """
-Author: Samuel Tovey
-Contact: stovey@icp.uni-stuttgart.de ; tovey.samuel@gmail.com
-Affiliation: Institute for Computational Physics, University of Stuttgart, Stuttgart, Germany
-
-Description: A parent class for the construction and sampling of an arbitrary potential
-"""
-
 import tensorflow as tf
 
 

@@ -13,17 +13,15 @@ General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-"""
 
-"""
+Dense Model
+===========
 Dense neural network model
 """
-
 import tensorflow as tf
 import numpy as np
 from tensorflow.keras import regularizers
 from tensorflow.keras.layers import Input
-
 
 
 class DenseModel:
@@ -210,7 +208,7 @@ class DenseModel:
 
         self._shuffle_and_split_data()  # Build the datasets
         self._build_model()  # Build the NN model
-        callbacks = self._compile_model()
+        self._compile_model()
         print(self.model.summary())  # Print a model summary
 
         # Train the model

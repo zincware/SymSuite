@@ -13,13 +13,13 @@ General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+SO(3) Data
+==========
+Class to generate data for the SO(3) group
 """
-
-""" Class to generate data for the SO(3) group """
-
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 
 class SO3:
