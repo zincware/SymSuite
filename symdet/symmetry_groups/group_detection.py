@@ -13,9 +13,9 @@ General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-"""
 
-"""
+Group Detection
+===============
 Cluster raw data into symmetry groups
 """
 from symdet.models.dense_model import DenseModel
@@ -103,4 +103,4 @@ class GroupDetection:
         representation = self.model.get_embedding_layer_representation(visualization_data)  # get the embedding layer
 
         visualizer = Visualizer(representation, colour_map)
-        naive_clusters = visualizer.tsne_visualization(plot=plot, save=save)
+        visualizer.tsne_visualization(plot=plot, save=save)

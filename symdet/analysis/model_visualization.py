@@ -13,12 +13,11 @@ General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-"""
 
-"""
+Model Visualization
+===================
 Visualize the NN models in different ways
 """
-
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 import numpy as np

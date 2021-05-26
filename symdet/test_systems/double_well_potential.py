@@ -13,12 +13,11 @@ General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-"""
 
-"""
+Double Well Potential
+=====================
 A class for the construction and sampling of a double well potential.
 """
-
 import numpy as np
 import matplotlib.pyplot as plt
 from symdet.test_systems.potential import Potential

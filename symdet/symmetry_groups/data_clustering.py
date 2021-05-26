@@ -13,13 +13,12 @@ General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-"""
 
-"""
+Data Clustering
+===============
 Python module for clustering data into classes. These may then be passed to the group detection class to
 identify symmetries between the classes.
 """
-
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
@@ -82,7 +81,7 @@ class DataCluster:
                 Data on which to apply conditions.
         bin_values : np.array
                 Bin numbers for the constraint.
-                
+
         Returns
         -------
         conditions : list
@@ -210,7 +209,7 @@ class DataCluster:
         representatives : int
                 Number of class representatives to have for each bin.
         value_range : list
-                The parameters within which to bin e.g.  k \in [-5, 5]
+                The parameters within which to bin e.g.  k in [-5, 5]
         bin_operation : list
                 Operation to apply to the bins e.g [1/5, 1e-3] will lead to bins of the form [k/5 - 1e-3, k/5 + 1e-3]
         axis : int

@@ -13,12 +13,11 @@ General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-"""
 
-"""
+SO(2) Data
+==========
 Class to generate data for the SO(2) group
 """
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -107,4 +106,3 @@ class SO2:
         if save:
             plt.savefig(f'SO(2)_{self.n_points}.svg', dpi=800, format='svg')
         plt.show()
-
