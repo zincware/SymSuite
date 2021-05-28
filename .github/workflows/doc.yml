@@ -1,0 +1,25 @@
+# This workflow will install Python dependencies and build the documentation.
+
+name: Build the documentation
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  doc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+      - name: Install dependencies
+        run: |
+          sudo apt install pandoc
+          pip3 install -r requirements.txt
+      - name: Build documentation
+        run: |
+          cd docs
+          make html
