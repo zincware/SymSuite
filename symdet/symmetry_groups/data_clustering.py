@@ -93,7 +93,11 @@ class DataCluster:
         conditions = []
         classes = []
         for key in bin_values:
-            conditions.append(np.logical_and(data >= (bin_values[key][0]), data <= (bin_values[key][1])))
+            conditions.append(
+                np.logical_and(
+                    data >= (bin_values[key][0]), data <= (bin_values[key][1])
+                )
+            )
             classes.append(key)
 
         return conditions, classes
@@ -190,17 +194,24 @@ class DataCluster:
 
         f_val = np.array(f_val)
         for group in range(len(f_val)):
-            plt.plot(f_val[group][:, 0], f_val[group][:, 1], '.')
+            plt.plot(f_val[group][:, 0], f_val[group][:, 1], ".")
 
         plt.plot(self.input_data)
         plt.ylim(-1.5, 1.0)
         plt.xlim(-0.1, 2.0)
         if save:
-            plt.savefig('Data_Clusters.svg', dpi=800, format='svg')
+            plt.savefig("Data_Clusters.svg", dpi=800, format="svg")
         plt.show()
 
-    def range_binning(self, value_range: list, bin_operation: list, axis: int = 1, representatives: int = 100,
-                      plot: bool = False, save_plot: bool = False) -> dict:
+    def range_binning(
+        self,
+        value_range: list,
+        bin_operation: list,
+        axis: int = 1,
+        representatives: int = 100,
+        plot: bool = False,
+        save_plot: bool = False,
+    ) -> dict:
         """
         A method to apply simple range binning to some data.
 
@@ -226,8 +237,10 @@ class DataCluster:
         """
         bin_values = {}
         for k in np.linspace(value_range[0], value_range[1], 11, dtype=int):
-            bin_values[f"{k + abs(value_range[0])}"] = [bin_operation[0] * k - bin_operation[1],
-                                                        bin_operation[0] * k + bin_operation[1]]
+            bin_values[f"{k + abs(value_range[0])}"] = [
+                bin_operation[0] * k - bin_operation[1],
+                bin_operation[0] * k + bin_operation[1],
+            ]
 
         bin_masks = self._function_to_bins(self.input_data[:, axis], bin_values)
         bin_count = self._count_bins(bin_masks)

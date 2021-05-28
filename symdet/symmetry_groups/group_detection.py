@@ -99,8 +99,12 @@ class GroupDetection:
         None
         """
         validation_data, predictions = self._get_model_predictions()
-        colour_map, clusters, visualization_data = self.cluster._cluster_data(predictions, validation_data)
-        representation = self.model.get_embedding_layer_representation(visualization_data)  # get the embedding layer
+        colour_map, clusters, visualization_data = self.cluster._cluster_data(
+            predictions, validation_data
+        )
+        representation = self.model.get_embedding_layer_representation(
+            visualization_data
+        )  # get the embedding layer
 
         visualizer = Visualizer(representation, colour_map)
         visualizer.tsne_visualization(plot=plot, save=save)

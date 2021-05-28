@@ -39,7 +39,14 @@ class SO3:
     data : np.array
             cartesian data for use in the regression.
     """
-    def __init__(self, n_points: int = 100, radius: float = 1.0, noise: bool = False, variance: float = 0.05):
+
+    def __init__(
+        self,
+        n_points: int = 100,
+        radius: float = 1.0,
+        noise: bool = False,
+        variance: float = 0.05,
+    ):
         """
         Constructor for the SO(3) data class.
 
@@ -70,14 +77,16 @@ class SO3:
         Updates the class state.
         """
         if self.noise:
-            self.radius = np.random.uniform(self.radius - self.variance, self.radius + self.variance, self.n_points)
+            self.radius = np.random.uniform(
+                self.radius - self.variance, self.radius + self.variance, self.n_points
+            )
 
         theta = np.random.rand(self.n_points) * (np.pi * 2)  # generate angles randomly
         phi = np.random.rand(self.n_points) * (np.pi)  # generate angles randomly
 
-        x = self.radius*np.cos(theta)*np.sin(phi)
-        y = self.radius*np.sin(theta)*np.sin(phi)
-        z = self.radius*np.cos(phi)
+        x = self.radius * np.cos(theta) * np.sin(phi)
+        y = self.radius * np.sin(theta) * np.sin(phi)
+        z = self.radius * np.cos(phi)
 
         self.data = np.array(list(zip(x, y, z)))
 
@@ -92,6 +101,8 @@ class SO3:
             self.generate_data()
 
         fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-        ax.scatter(self.data[:, 0], self.data[:, 1], self.data[:, 2], marker='.', color='k')
+        ax = fig.add_subplot(111, projection="3d")
+        ax.scatter(
+            self.data[:, 0], self.data[:, 1], self.data[:, 2], marker=".", color="k"
+        )
         plt.show()

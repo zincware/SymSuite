@@ -3,7 +3,8 @@ Study of the double well potential
 
 Notes
 -----
-In this tutorial we will perform symmetry detection on some double well potential data. This involves training a neural
+In this tutorial we will perform symmetry detection on some double well potential data.
+This involves training a neural
 network and visualizing its embedding layer using TSNE.
 """
 
@@ -22,21 +23,20 @@ def main():
     double_well_potential = DoubleWellPotential()
     double_well_potential.plot_potential()
     clustering = DataCluster(double_well_potential.get_function_values())
-    training_data = clustering.range_binning(value_range=[-5, 5],
-                                             bin_operation=[1 / 5, 1e-3],
-                                             representatives=1000,
-                                             plot=False)
+    training_data = clustering.range_binning(
+        value_range=[-5, 5],
+        bin_operation=[1 / 5, 1e-3],
+        representatives=1000,
+        plot=False,
+    )
     # Build, train, and evaluate the model
-    model = DenseModel(training_data,
-                       n_layers=7,
-                       units=80,
-                       epochs=10,
-                       batch_size=64,
-                       lr=0.00025)
+    model = DenseModel(
+        training_data, n_layers=7, units=80, epochs=10, batch_size=64, lr=0.00025
+    )
     sym_detector = GroupDetection(model, clustering)
     sym_detector.run_symmetry_detection(plot=True)
 
 
 if __name__ == "__main__":
-    """ Standard boilerplate. """
+    """Standard boilerplate."""
     main()

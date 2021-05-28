@@ -8,7 +8,8 @@ from symdet.generators.generators import GeneratorExtraction
 
 def generator_extraction():
     """
-    Function to extract the SO(2) Lie algebra generators from points on a circle given small amounts of noise.
+    Function to extract the SO(2) Lie algebra generators from points on a circle
+    given small amounts of noise.
 
     The steps involved for SymDet to perform the extraction are
     1.) Generate some data
@@ -17,17 +18,18 @@ def generator_extraction():
     4.) Perform the generator extraction.
     """
 
-    sphere = SO3(n_points=1000,
-                 noise=True,
-                 variance=0.05)
+    sphere = SO3(n_points=1000, noise=True, variance=0.05)
     sphere.plot_data()
 
-    generator_extractor = GeneratorExtraction(sphere.data,       # clustered data
-                                              delta=0.5,         # distance of points to hyperplane
-                                              epsilon=0.3,       # distance between points connected by a generator
-                                              candidate_runs=9)  # Number of times to run the extraction loop
-    generators, variance_list = generator_extractor.perform_generator_extraction(pca_components=9,
-                                                                                 plot=True)
+    generator_extractor = GeneratorExtraction(
+        sphere.data,  # clustered data
+        delta=0.5,  # distance of points to hyperplane
+        epsilon=0.3,  # distance between points connected by a generator
+        candidate_runs=9,
+    )  # Number of times to run the extraction loop
+    generators, variance_list = generator_extractor.perform_generator_extraction(
+        pca_components=9, plot=True
+    )
 
 
 if __name__ == "__main__":
