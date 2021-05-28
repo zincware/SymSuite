@@ -89,7 +89,7 @@ class DoubleWellPotential(Potential):
         function = -1 * self.a * r ** 2 + r ** 4
 
         plt.plot(r, function)
-        plt.xlabel('r')
-        plt.ylabel('f(r)')
+        plt.xlabel("r")
+        plt.ylabel("f(r)")
         plt.ylim(-1.5, 1.0)
         plt.show()

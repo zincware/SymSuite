@@ -43,7 +43,13 @@ class SO2:
 
     """
 
-    def __init__(self, n_points: int = 100, radius: float = 1, noise: bool = False, variance: float = 0.05):
+    def __init__(
+        self,
+        n_points: int = 100,
+        radius: float = 1,
+        noise: bool = False,
+        variance: float = 0.05,
+    ):
         """
         Constructor for the SO(2) data.
 
@@ -76,12 +82,14 @@ class SO2:
         """
 
         if self.noise:
-            self.radius = np.random.uniform(self.radius - self.variance, self.radius + self.variance, self.n_points)
+            self.radius = np.random.uniform(
+                self.radius - self.variance, self.radius + self.variance, self.n_points
+            )
 
         self.theta = np.random.rand(self.n_points) * (np.pi * 2)
         # generate x, y samples
-        x = self.radius*np.cos(self.theta)
-        y = self.radius*np.sin(self.theta)
+        x = self.radius * np.cos(self.theta)
+        y = self.radius * np.sin(self.theta)
 
         self.data = np.array(list(zip(x, y)))
 
@@ -97,12 +105,12 @@ class SO2:
         if self.data is None:
             self.generate_data()  # generate the data
 
-        plt.plot(self.data[:, 0], self.data[:, 1], 'k.')
-        plt.xlabel('x')
-        plt.ylabel('y')
+        plt.plot(self.data[:, 0], self.data[:, 1], "k.")
+        plt.xlabel("x")
+        plt.ylabel("y")
         plt.xlim(-1.5, 1.5)
         plt.ylim(-1.5, 1.5)
-        plt.axis('equal')
+        plt.axis("equal")
         if save:
-            plt.savefig(f'SO(2)_{self.n_points}.svg', dpi=800, format='svg')
+            plt.savefig(f"SO(2)_{self.n_points}.svg", dpi=800, format="svg")
         plt.show()

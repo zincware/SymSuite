@@ -61,9 +61,9 @@ class Potential:
         if self.n_class_members is None:
             self.n_class_members = 1000
         if self.coordinate_tensor is None:
-            self.coordinate_tensor = tf.random.uniform([self.n_class_members * 1000, 2],
-                                                       minval=0.0,
-                                                       maxval=1.6)
+            self.coordinate_tensor = tf.random.uniform(
+                [self.n_class_members * 1000, 2], minval=0.0, maxval=1.6
+            )
 
     def get_function_values(self, coordinate_tensor: tf.Tensor):
         """
@@ -74,10 +74,14 @@ class Potential:
         coordinate_tensor : tf.Tensor
                 coordinate tensor on which to apply a function.
         """
-        raise NotImplementedError("Implemented in child class")  # Raise error if this class method is called directly
+        raise NotImplementedError(
+            "Implemented in child class"
+        )  # Raise error if this class method is called directly
 
     def plot_potential(self):
         """
         Plot the potential.
         """
-        raise NotImplementedError("Implemented in child class")  # Raise error if this class method is called directly
+        raise NotImplementedError(
+            "Implemented in child class"
+        )  # Raise error if this class method is called directly

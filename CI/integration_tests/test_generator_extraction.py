@@ -21,9 +21,7 @@ class TestSO2(unittest.TestCase):
         -------
 
         """
-        cls.circle = SO2(n_points=500,
-                         noise=True,
-                         variance=0.05)
+        cls.circle = SO2(n_points=500, noise=True, variance=0.05)
         cls.circle.generate_data()
 
     def test_circle_generation(self):
@@ -34,8 +32,9 @@ class TestSO2(unittest.TestCase):
         -------
         Asserts that the mean of the coordinate norms is approx 1.
         """
-
-        self.assertAlmostEqual(float(np.mean(np.linalg.norm(self.circle.data, axis=1))), 1, delta=0.01)
+        self.assertAlmostEqual(
+            float(np.mean(np.linalg.norm(self.circle.data, axis=1))), 1, delta=0.01
+        )
 
     def test_generator_extraction(self):
         """
@@ -45,12 +44,18 @@ class TestSO2(unittest.TestCase):
         -------
         Asserts the correct generator is found.
         """
-        generator_extractor = GeneratorExtraction(self.circle.data,  # clustered data
-                                                  delta=0.5,  # distance of points to hyperplane
-                                                  epsilon=0.3,  # distance between points connected by a generator
-                                                  candidate_runs=5)  # Number of times to run the extraction loop
-        self.generators, self.variance_list = generator_extractor.perform_generator_extraction(pca_components=4,
-                                                                                               plot=False)
+        generator_extractor = GeneratorExtraction(
+            self.circle.data,  # clustered data
+            delta=0.5,  # distance of points to hyperplane
+            epsilon=0.3,  # distance between points connected by a generator
+            candidate_runs=5,
+        )  # Number of times to run the extraction loop
+        (
+            self.generators,
+            self.variance_list,
+        ) = generator_extractor.perform_generator_extraction(
+            pca_components=4, plot=False
+        )
         self.assertAlmostEqual(self.variance_list[0], 1, delta=0.0001)
         self.assertAlmostEqual(self.variance_list[1], 0, delta=0.00000001)
         generator = np.sqrt(self.generators[0] ** 2)
@@ -60,5 +65,5 @@ class TestSO2(unittest.TestCase):
         self.assertAlmostEqual(generator[3], 0.0, delta=0.05)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

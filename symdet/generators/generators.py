@@ -58,7 +58,13 @@ class GeneratorExtraction:
             Constrained generator candidates.
     """
 
-    def __init__(self, point_cloud: tf.Tensor, delta: float = 0.5, epsilon: float = 0.3, candidate_runs: int = 10):
+    def __init__(
+        self,
+        point_cloud: tf.Tensor,
+        delta: float = 0.5,
+        epsilon: float = 0.3,
+        candidate_runs: int = 10,
+    ):
         """
         Constructor for the GeneratorExtraction class.
 
@@ -124,7 +130,9 @@ class GeneratorExtraction:
             basis_candidates = np.zeros((self.dimension, self.dimension))
             for i, vector in enumerate(basis_candidates):
                 vector[i] = 1
-            reduced_candidates = self._eliminate_closest_vector(basis, list(basis_candidates))
+            reduced_candidates = self._eliminate_closest_vector(
+                basis, list(basis_candidates)
+            )
             for item in reduced_candidates:
                 basis.append(self._perform_gs(item, basis))
 
@@ -169,7 +177,9 @@ class GeneratorExtraction:
 
         return basis_vector / np.linalg.norm(basis_vector)
 
-    def _eliminate_closest_vector(self, reference_vectors: list, test_vectors: list) -> np.ndarray:
+    def _eliminate_closest_vector(
+        self, reference_vectors: list, test_vectors: list
+    ) -> np.ndarray:
         """
         Remove the closest vectors in the theoretical basis set
 
@@ -188,9 +198,9 @@ class GeneratorExtraction:
         for vector in test_vectors:
             d_1 = np.dot(vector, reference_vectors[0])
             d_2 = np.dot(vector, reference_vectors[1])
-            distances.append(d_1**2 + d_2**2)
+            distances.append(d_1 ** 2 + d_2 ** 2)
 
-        return np.array(test_vectors)[np.argsort(distances)][:int(self.dimension - 2)]
+        return np.array(test_vectors)[np.argsort(distances)][: int(self.dimension - 2)]
 
     def _start_gs(self) -> Tuple[np.ndarray, np.ndarray]:
         """
@@ -205,7 +215,9 @@ class GeneratorExtraction:
         index_2 = random.randint(0, len(self.point_cloud) - 1)
 
         vector_1 = self.point_cloud[index_1] / np.linalg.norm(self.point_cloud[index_1])
-        vector_2 = self.point_cloud[index_2] - self._projection_operator(vector_1, self.point_cloud[index_2])
+        vector_2 = self.point_cloud[index_2] - self._projection_operator(
+            vector_1, self.point_cloud[index_2]
+        )
         vector_2 /= np.linalg.norm(vector_2)
 
         return vector_1, vector_2
@@ -286,7 +298,9 @@ class GeneratorExtraction:
         for generator in self.generator_candidates:
             outcome = []
             for basis in self.basis[2:]:
-                data = np.matmul(generator.reshape(self.dimension, self.dimension), basis)
+                data = np.matmul(
+                    generator.reshape(self.dimension, self.dimension), basis
+                )
                 outcome = np.concatenate((outcome, data))
 
             if np.allclose(outcome, [0 for _ in range(len(outcome))], atol=1):
@@ -301,9 +315,9 @@ class GeneratorExtraction:
         Updates the class state.
         """
         self._simple_regression()
-        unconstrained_generators = np.array(self.generator_candidates).reshape((len(self.generator_candidates),
-                                                                                self.dimension,
-                                                                                self.dimension))
+        unconstrained_generators = np.array(self.generator_candidates).reshape(
+            (len(self.generator_candidates), self.dimension, self.dimension)
+        )
         self.generator_candidates = []
         for generator in unconstrained_generators:
             truth_array = []
@@ -311,7 +325,9 @@ class GeneratorExtraction:
                 test = sum(generator * vector)
                 truth_array.append(all(abs(test) < 1))
             if all(truth_array):
-                self.generator_candidates.append(np.array(generator).reshape((1, self.dimension * self.dimension)))
+                self.generator_candidates.append(
+                    np.array(generator).reshape((1, self.dimension * self.dimension))
+                )
 
     def _simple_regression(self):
         """
@@ -328,12 +344,16 @@ class GeneratorExtraction:
             points = [self.hyperplane_set[pair[0]], self.hyperplane_set[pair[1]]]
             sigma = self._compute_sigma(points)
             Y.append(
-                ((points[0] - points[1]) * np.linalg.norm(points[0])) / (sigma * np.linalg.norm(points[1] - points[0])))
+                ((points[0] - points[1]) * np.linalg.norm(points[0]))
+                / (sigma * np.linalg.norm(points[1] - points[0]))
+            )
             X.append(points[0])
 
         generator = []
         for i in range(self.dimension):
-            generator = np.concatenate((generator,  LinearRegression().fit(X, np.array(Y)[:, i]).coef_))
+            generator = np.concatenate(
+                (generator, LinearRegression().fit(X, np.array(Y)[:, i]).coef_)
+            )
 
         self.generator_candidates.append(generator)
 
@@ -350,8 +370,10 @@ class GeneratorExtraction:
         sigma : int
                 A direction measurement used to identify direction information in the basis set.
         """
-        return np.sign((np.dot(pair[0], self.basis[0]) * np.dot(pair[1], self.basis[1])) -
-                       (np.dot(pair[0], self.basis[1]) * np.dot(pair[1], self.basis[0])))
+        return np.sign(
+            (np.dot(pair[0], self.basis[0]) * np.dot(pair[1], self.basis[1]))
+            - (np.dot(pair[0], self.basis[1]) * np.dot(pair[1], self.basis[0]))
+        )
 
     def _extract_generators(self, pca_components: int) -> Tuple:
         """
@@ -376,7 +398,7 @@ class GeneratorExtraction:
         pca = PCA(n_components=pca_components)
         pca.fit(self.generator_candidates)
 
-        return np.sqrt(self.dimension)*pca.components_, pca.explained_variance_ratio_
+        return np.sqrt(self.dimension) * pca.components_, pca.explained_variance_ratio_
 
     def _plot_results(self, std_values, save: bool = False):
         """
@@ -393,17 +415,19 @@ class GeneratorExtraction:
         -------
         Plots and image and saves it if required.
         """
-        plt.plot([i for i in range(len(std_values))], std_values, 'o-')
+        plt.plot([i for i in range(len(std_values))], std_values, "o-")
         plt.xlabel("No. PCA Components")
         plt.ylabel("Explained Variance (%)")
         plt.xticks(np.arange(len(std_values)), [i + 1 for i in range(len(std_values))])
         plt.xlim(-0.1, len(std_values) - 0.9)
         plt.ylim(-0.1, 1.1)
         if save:
-            plt.savefig("PCA_STD.svg", dpi=800, format='svg')
+            plt.savefig("PCA_STD.svg", dpi=800, format="svg")
         plt.show()
 
-    def perform_generator_extraction(self, pca_components: int = 4, plot: bool = False, save: bool = False) -> Tuple:
+    def perform_generator_extraction(
+        self, pca_components: int = 4, plot: bool = False, save: bool = False
+    ) -> Tuple:
         """
         Collect all methods and perform the generator extraction.
 
@@ -424,7 +448,9 @@ class GeneratorExtraction:
                 explained variance list.
         """
 
-        for _ in tqdm(range(self.candidate_runs), ncols=100, desc="Producing generator candidates"):
+        for _ in tqdm(
+            range(self.candidate_runs), ncols=100, desc="Producing generator candidates"
+        ):
             self._remove_redundancy()
             self._generate_basis_set()
             self._construct_hyperplane_set()

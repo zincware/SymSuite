@@ -9,3 +9,4 @@ tqdm
 IPython
 pandoc
 numpydoc
+pre-commit

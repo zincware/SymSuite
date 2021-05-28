@@ -61,9 +61,19 @@ class DenseModel:
             Tensorflow model to train.
     """
 
-    def __init__(self, data_dict: dict, n_layers: int = 5, units: int = 10, epochs: int = 20, activation: str = 'relu',
-                 monitor: str = 'accuracy', lr: float = 1e-4, batch_size: int = 100, terminate_patience: int = 10,
-                 lr_patience: int = 5):
+    def __init__(
+        self,
+        data_dict: dict,
+        n_layers: int = 5,
+        units: int = 10,
+        epochs: int = 20,
+        activation: str = "relu",
+        monitor: str = "accuracy",
+        lr: float = 1e-4,
+        batch_size: int = 100,
+        terminate_patience: int = 10,
+        lr_patience: int = 5,
+    ):
         """
         Python constructor
 
@@ -116,13 +126,22 @@ class DenseModel:
         """
 
         for key in self.data_dict:
-            labels = tf.repeat(tf.convert_to_tensor(np.array(key, dtype=float)), len(self.data_dict[key]))
+            labels = tf.repeat(
+                tf.convert_to_tensor(np.array(key, dtype=float)),
+                len(self.data_dict[key]),
+            )
             stacked_data = tf.stack([self.data_dict[key], labels], axis=1)
             stacked_data = tf.random.shuffle(stacked_data)
             data_volume = len(stacked_data)
-            train, test, validate = tf.split(stacked_data,
-                                             [int(0.5 * data_volume), int(0.3 * data_volume), int(0.2 * data_volume)],
-                                             axis=0)
+            train, test, validate = tf.split(
+                stacked_data,
+                [
+                    int(0.5 * data_volume),
+                    int(0.3 * data_volume),
+                    int(0.2 * data_volume),
+                ],
+                axis=0,
+            )
             if self.train_ds is None:
                 self.train_ds = train
             else:
@@ -155,21 +174,39 @@ class DenseModel:
 
         # Loop over the layers excluding one for the input_layer, the second last, the embedding, and the softmax layer
         for i in range(self.n_layers - 2):
-            model.add(tf.keras.layers.Dense(self.units, self.activation, kernel_regularizer=regularizers.l2(0.0000)))
+            model.add(
+                tf.keras.layers.Dense(
+                    self.units,
+                    self.activation,
+                    kernel_regularizer=regularizers.l2(0.0000),
+                )
+            )
 
         # Add the second-to-last layer
-        model.add(tf.keras.layers.Dense(self.units,
-                                        self.activation,
-                                        name='second_last_layer',
-                                        kernel_regularizer=regularizers.l2(0.0000)))
+        model.add(
+            tf.keras.layers.Dense(
+                self.units,
+                self.activation,
+                name="second_last_layer",
+                kernel_regularizer=regularizers.l2(0.0000),
+            )
+        )
         # Add the embedding layer
-        model.add(tf.keras.layers.Dense(self.units,
-                                        self.activation,
-                                        name='embedding_layer',
-                                        kernel_regularizer=regularizers.l2(0.001)))
+        model.add(
+            tf.keras.layers.Dense(
+                self.units,
+                self.activation,
+                name="embedding_layer",
+                kernel_regularizer=regularizers.l2(0.001),
+            )
+        )
 
         # Add the softmax layer
-        model.add(tf.keras.layers.Dense(len(self.data_dict), name='softmax_layer', activation='softmax'))
+        model.add(
+            tf.keras.layers.Dense(
+                len(self.data_dict), name="softmax_layer", activation="softmax"
+            )
+        )
 
         self.model = model  # Add the model to the class
 
@@ -184,15 +221,24 @@ class DenseModel:
         """
 
         # Define the callbacks
-        terminating_callback = tf.keras.callbacks.EarlyStopping(monitor=self.monitor,
-                                                                patience=self.terminate_patience, )
-        reduction_callback = tf.keras.callbacks.ReduceLROnPlateau(monitor=self.monitor, patience=self.lr_patience,
-                                                                  factor=0.1, mode='auto', min_lr=0.00001, cooldown=0)
+        terminating_callback = tf.keras.callbacks.EarlyStopping(
+            monitor=self.monitor,
+            patience=self.terminate_patience,
+        )
+        reduction_callback = tf.keras.callbacks.ReduceLROnPlateau(
+            monitor=self.monitor,
+            patience=self.lr_patience,
+            factor=0.1,
+            mode="auto",
+            min_lr=0.00001,
+            cooldown=0,
+        )
 
-        opt = tf.keras.optimizers.Adam(learning_rate=self.lr, decay=0.)
+        opt = tf.keras.optimizers.Adam(learning_rate=self.lr, decay=0.0)
 
-        self.model.compile(optimizer=opt, loss='categorical_crossentropy',
-                           metrics=['acc'])
+        self.model.compile(
+            optimizer=opt, loss="categorical_crossentropy", metrics=["acc"]
+        )
 
         return [terminating_callback, reduction_callback]
 
@@ -213,13 +259,18 @@ class DenseModel:
 
         # Train the model
         for i in range(1, 6):
-            self.model.fit(x=self.train_ds[:, 0],
-                           y=tf.keras.utils.to_categorical(self.train_ds[:, 1]),
-                           batch_size=self.batch_size,
-                           shuffle=True,
-                           validation_data=(self.test_ds[:, 0], tf.keras.utils.to_categorical(self.test_ds[:, 1])),
-                           verbose=1,
-                           epochs=self.epochs)
+            self.model.fit(
+                x=self.train_ds[:, 0],
+                y=tf.keras.utils.to_categorical(self.train_ds[:, 1]),
+                batch_size=self.batch_size,
+                shuffle=True,
+                validation_data=(
+                    self.test_ds[:, 0],
+                    tf.keras.utils.to_categorical(self.test_ds[:, 1]),
+                ),
+                verbose=1,
+                epochs=self.epochs,
+            )
 
         return self.train_ds
 
@@ -232,10 +283,10 @@ class DenseModel:
         Prints the model evaluation.
         """
 
-        attributes = self.model.evaluate(x=self.val_ds[:, 0],
-                                         y=tf.keras.utils.to_categorical(self.val_ds[:, 1]))
-        print(f"Loss: {attributes[0]} \n"
-              f"Accuracy: {attributes[1]}")
+        attributes = self.model.evaluate(
+            x=self.val_ds[:, 0], y=tf.keras.utils.to_categorical(self.val_ds[:, 1])
+        )
+        print(f"Loss: {attributes[0]} \n" f"Accuracy: {attributes[1]}")
 
     def get_embedding_layer_representation(self, data_array: np.ndarray) -> tf.Tensor:
         """
