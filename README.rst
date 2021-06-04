@@ -1,52 +1,56 @@
 |build| |madewithpython| |license|
 
-# Detect_Symmetry
+Detect_Symmetry
+---------------
 
 A python package to perform symmetry detection and generator extraction on
 raw data. Follows the paper by Sven Krippendorf and Marc Syvaeri on
 [Detecting symmetries with neural networks](https://iopscience.iop.org/article/10.1088/2632-2153/abbd2d).
 
-### Notes
+Notes
+=====
 This project is under heavy development and is therefore not available on PyPi.
 I would not expect major API breaks but certainly addition of functionality.
 
-### Installation
+Installation
+============
 Currently it is only possible to install SymDet from source and it will remain
 like this until it has been thoroughly tested on experimental data and a larger
 number of symmetry groups.
 
-#### Install from source
+Install from source
+*******************
 
 **pip installation**
-```bash
-git clone https://github.com/SamTov/SymDet.git
-cd SymDet
-pip3 install . --user
-```
+.. code-block:: bash
+   git clone https://github.com/SamTov/SymDet.git
+   cd SymDet
+   pip3 install . --user
+
 
 **conda installation**
-```bash
-git clone https://github.com/SamTov/SymDet.git
-cd SymDet
-conda create -n SymDet python=3.8
-conda activate SymDet
-pip3 install .
-```
+.. code-block:: bash
+   git clone https://github.com/SamTov/SymDet.git
+   cd SymDet
+   conda create -n SymDet python=3.8
+   conda activate SymDet
+   pip3 install .
 
-#### Documentation
+Documentation
+*************
 
 There is a live version of the documentation hosted
 [here](https://symdet.readthedocs.io/en/latest/). Alternatively you can build
 it from source using
 
-```bash
-cd Symdet/docs
-make html
-```
+.. code-block:: bash
+   cd Symdet/docs
+   make html
 
 You can then browse the documentation locally using your favourite browser.
 
-### Getting started
+Getting started
+---------------
 
 Because SymDet is not designed for single purpose, you will need to interface
 with different libraries and classes directly. This isn't as bad as it sounds
@@ -63,7 +67,8 @@ generators modules.
  [examples](https://github.com/SamTov/SymDet/tree/main/examples) directory and
  following along with some tutorials.
 
-#### Comments
+Comments
+--------
 This is a really young project and any comments or contributions would be
 welcome. If you see issues in the documentation (particularly if you're a
 mathematician) I would always welcome the feedback.
