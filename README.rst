@@ -1,11 +1,11 @@
 |build| |madewithpython| |license|
 
-Detect_Symmetry
----------------
+SymDet
+------
 
 A python package to perform symmetry detection and generator extraction on
 raw data. Follows the paper by Sven Krippendorf and Marc Syvaeri on
-[Detecting symmetries with neural networks](https://iopscience.iop.org/article/10.1088/2632-2153/abbd2d).
+:url:`Detecting symmetries with neural networks<https://iopscience.iop.org/article/10.1088/2632-2153/abbd2d>`.
 
 Notes
 =====
@@ -40,8 +40,8 @@ Documentation
 *************
 
 There is a live version of the documentation hosted
-[here](https://symdet.readthedocs.io/en/latest/). Alternatively you can build
-it from source using
+:url:`here<https://symdet.readthedocs.io/en/latest/>`. Alternatively you can
+build it from source using
 
 .. code-block:: bash
    cd Symdet/docs
@@ -64,8 +64,8 @@ generators modules.
   extracting Lie group generators from the symmetry groups.
   
  As a first step I would suggest looking at the
- [examples](https://github.com/SamTov/SymDet/tree/main/examples) directory and
- following along with some tutorials.
+ :url:`examples<https://github.com/SamTov/SymDet/tree/main/examples>`
+ directory and following along with some tutorials.
 
 Comments
 ========
