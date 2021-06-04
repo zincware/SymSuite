@@ -64,7 +64,7 @@ generators modules.
   extracting Lie group generators from the symmetry groups.
   
  As a first step I would suggest looking at the
- :ref:`examples <https://github.com/SamTov/SymDet/tree/main/examples>`_
+ `examples <https://github.com/SamTov/SymDet/tree/main/examples>`_
  directory and following along with some tutorials.
 
 Comments
