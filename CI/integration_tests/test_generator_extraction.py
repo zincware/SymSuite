@@ -59,10 +59,10 @@ class TestSO2(unittest.TestCase):
         self.assertAlmostEqual(self.variance_list[0], 1, delta=0.0001)
         self.assertAlmostEqual(self.variance_list[1], 0, delta=0.00000001)
         generator = np.sqrt(self.generators[0] ** 2)
-        self.assertAlmostEqual(generator[0], 0.0, delta=0.05)
+        self.assertAlmostEqual(generator[0], 0.0, delta=0.1)
         self.assertAlmostEqual(generator[1], 1.0, delta=0.1)
         self.assertAlmostEqual(generator[2], 1.0, delta=0.1)
-        self.assertAlmostEqual(generator[3], 0.0, delta=0.05)
+        self.assertAlmostEqual(generator[3], 0.0, delta=0.1)
 
 
 if __name__ == "__main__":
