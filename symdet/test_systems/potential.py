@@ -27,8 +27,6 @@ class Potential:
 
     Attributes
     ----------
-    k_range : list
-            Bin width with which to sample the data, e.g. [-5, 5]
     n_class_members : int
             Amount of class representatives to have.
     coordinate_tensor : tf.Tensor

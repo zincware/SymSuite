@@ -34,17 +34,17 @@ class DoubleWellPotential(Potential):
     -----
     The double well potential is defined mathematically as
 
-    ..math::
+    .. math::
 
-            f(x, y) = -a(x^{2} + y^{2}) + (x^{2} + y^{2})^{2} = -ar^{2} + r^{4}
+       f(x, y) = -a(x^{2} + y^{2}) + (x^{2} + y^{2})^{2} = -ar^{2} + r^{4}
 
     Attributes
     ----------
     a : float
-            prefactor in the double well calculation
+            pre-factor in the double well calculation
     """
 
-    def __init__(self, n_class_methods: int = None, coordinates=None, a: float = 2.3):
+    def __init__(self, n_class_members: int = None, coordinates=None, a: float = 2.3):
         """
         Constructor for the double well potential data generator.
 
@@ -55,7 +55,7 @@ class DoubleWellPotential(Potential):
         a: float
                 Pre-factor in the double well potential.
         """
-        super().__init__(n_class_members=n_class_methods, coordinates=coordinates)
+        super().__init__(n_class_members=n_class_members, coordinates=coordinates)
         self.a = a
 
     def get_function_values(self, coordinate_tensor: tf.Tensor = None) -> np.ndarray:
