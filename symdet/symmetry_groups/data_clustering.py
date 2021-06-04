@@ -66,7 +66,7 @@ class DataCluster:
         """
         summed_array = []
         for cls in data:
-            summed_array.append(np.sum(cls))
+            summed_array.append(len(cls))
 
         return summed_array
 
