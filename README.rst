@@ -50,7 +50,7 @@ it from source using
 You can then browse the documentation locally using your favourite browser.
 
 Getting started
----------------
+===============
 
 Because SymDet is not designed for single purpose, you will need to interface
 with different libraries and classes directly. This isn't as bad as it sounds
@@ -68,7 +68,7 @@ generators modules.
  following along with some tutorials.
 
 Comments
---------
+========
 This is a really young project and any comments or contributions would be
 welcome. If you see issues in the documentation (particularly if you're a
 mathematician) I would always welcome the feedback.
