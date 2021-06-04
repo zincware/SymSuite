@@ -23,6 +23,7 @@ Install from source
 
 **pip installation**
 .. code-block:: bash
+
    git clone https://github.com/SamTov/SymDet.git
    cd SymDet
    pip3 install . --user
@@ -30,6 +31,7 @@ Install from source
 
 **conda installation**
 .. code-block:: bash
+
    git clone https://github.com/SamTov/SymDet.git
    cd SymDet
    conda create -n SymDet python=3.8
@@ -44,6 +46,7 @@ There is a live version of the documentation hosted
 build it from source using
 
 .. code-block:: bash
+
    cd Symdet/docs
    make html
 
