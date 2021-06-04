@@ -22,14 +22,15 @@ Install from source
 *******************
 
 **pip installation**
+
 .. code-block:: bash
 
    git clone https://github.com/SamTov/SymDet.git
    cd SymDet
    pip3 install . --user
 
-
 **conda installation**
+
 .. code-block:: bash
 
    git clone https://github.com/SamTov/SymDet.git
