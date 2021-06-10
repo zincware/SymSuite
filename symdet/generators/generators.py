@@ -77,7 +77,8 @@ class GeneratorExtraction:
         epsilon : float
                 Distance between points to be considered as a point pair.
         candidate_runs : int
-                Number of times to generate candidates before running PCA. Tune if convergence is not found.
+                Number of times to generate candidates before running PCA.
+                 Tune if convergence is not found.
         """
         self.point_cloud = point_cloud
         self.delta = delta
@@ -150,15 +151,15 @@ class GeneratorExtraction:
         Will throw an exception if the assert fails.
         """
         for basis in self.basis:
-            np.testing.assert_almost_equal(np.linalg.norm(basis), 1)
+            np.testing.assert_almost_equal(np.linalg.norm(basis), 1)  # check the normalization.
             for test in self.basis:
                 if all(test == basis):
                     continue
-                np.testing.assert_almost_equal(np.dot(basis, test), 0)
+                np.testing.assert_almost_equal(np.dot(basis, test), 0)  # check the orthogonality.
 
     def _perform_gs(self, vector: list, basis_set: list) -> np.ndarray:
         """
-        Perform the Gram-Schmidt orthogonalization procedure.
+        Perform the Gram-Schmidt procedure.
 
         Parameters
         ----------
@@ -178,8 +179,9 @@ class GeneratorExtraction:
         return basis_vector / np.linalg.norm(basis_vector)
 
     def _eliminate_closest_vector(
-        self, reference_vectors: list, test_vectors: list
-    ) -> np.ndarray:
+            self,
+            reference_vectors: list,
+            test_vectors: list) -> np.ndarray:
         """
         Remove the closest vectors in the theoretical basis set
 
@@ -192,7 +194,8 @@ class GeneratorExtraction:
         Returns
         -------
         basis_vectors : np.ndarray
-                Returns the basis vectors which minimizes the sum of squares of the scalar product.
+                Returns the basis vectors which minimizes the sum of
+                squares of the scalar product.
         """
         distances = []
         for vector in test_vectors:
@@ -375,7 +378,7 @@ class GeneratorExtraction:
             - (np.dot(pair[0], self.basis[1]) * np.dot(pair[1], self.basis[0]))
         )
 
-    def _extract_generators(self, pca_components: int) -> Tuple:
+    def _extract_generators(self, pca_components: int) -> Tuple[np.ndarray, np.ndarray]:
         """
         Perform PCA on candidates and extract true generators.
 
@@ -386,9 +389,9 @@ class GeneratorExtraction:
 
         Returns
         -------
-        pca_components : list
+        pca_components : np.ndarray
                 pca components.
-        variance : list
+        variance : np.ndarray
                 The explained variance list.
         """
         if self.dimension > 2:
@@ -397,10 +400,9 @@ class GeneratorExtraction:
 
         pca = PCA(n_components=pca_components)
         pca.fit(self.generator_candidates)
-
         return np.sqrt(self.dimension) * pca.components_, pca.explained_variance_ratio_
 
-    def _plot_results(self, std_values, save: bool = False):
+    def _plot_results(self, std_values: list, save: bool = False):
         """
         Plot the results of the analysis.
 
@@ -448,14 +450,17 @@ class GeneratorExtraction:
                 explained variance list.
         """
 
-        for _ in tqdm(
-            range(self.candidate_runs), ncols=100, desc="Producing generator candidates"
-        ):
-            self._remove_redundancy()
-            self._generate_basis_set()
-            self._construct_hyperplane_set()
-            self._identify_point_pairs()
-            self._perform_regression()
+        for _ in tqdm(range(self.candidate_runs),
+                      ncols=100,
+                      desc="Producing generator candidates"):
+            try:
+                self._remove_redundancy()
+                self._generate_basis_set()
+                self._construct_hyperplane_set()
+                self._identify_point_pairs()
+                self._perform_regression()
+            except ValueError:
+                continue
 
         generators, std_array = self._extract_generators(pca_components=pca_components)
         for i, item in enumerate(generators):
