@@ -103,9 +103,9 @@ class DataCluster:
         return conditions, classes
 
     @staticmethod
-    def _cluster_data(predictions: np.ndarray, training_data: np.ndarray) -> Tuple:
+    def cluster_data(predictions: np.ndarray, training_data: np.ndarray) -> Tuple:
         """
-        Cluster data by the norm of the potential at the minimum
+        Cluster data and set the colour classes.
 
         Parameters
         ----------
