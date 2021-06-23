@@ -1,4 +1,4 @@
-|build| |madewithpython| |license|
+|build| |docs| |madewithpython| |license|
 
 SymDet
 ------
@@ -79,9 +79,13 @@ mathematician) I would always welcome the feedback.
 
 .. badges
 
-.. |build| image:: https://img.shields.io/badge/Build-Passing-green.svg
+.. |build| image:: https://github.com/SamTov/SymDet/actions/workflows/python-package.yml/badge.svg
     :alt: Build tests passing
-    :target: https://github.com/SamTov/SymDet/blob/readme_badges/.github/workflows/pytest.yaml
+    :target: https://github.com/SamTov/SymDet/blob/readme_badges/
+
+.. |docs| image:: https://readthedocs.org/projects/symdet/badge/?version=latest&style=flat
+    :alt: Build tests passing
+    :target: https://symdet.readthedocs.io/en/latest/
 
 .. |license| image:: https://img.shields.io/badge/License-GPLv3.0-green.svg
     :alt: Project license
