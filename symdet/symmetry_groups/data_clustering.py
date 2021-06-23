@@ -194,11 +194,12 @@ class DataCluster:
 
         f_val = np.array(f_val)
         for group in range(len(f_val)):
-            plt.plot(f_val[group][:, 0], f_val[group][:, 1], ".")
+            plt.plot(f_val[group][:, 0], f_val[group][:, 1], ".", zorder=4, markersize=10, label=f"Class {group}")
 
-        plt.plot(self.input_data)
+        plt.plot(self.input_data[:, 0], self.input_data[:, 1], ',')
         plt.ylim(-1.5, 1.0)
         plt.xlim(-0.1, 2.0)
+        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         if save:
             plt.savefig("Data_Clusters.svg", dpi=800, format="svg")
         plt.show()
