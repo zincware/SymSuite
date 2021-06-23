@@ -22,6 +22,8 @@ from symdet.models.dense_model import DenseModel
 from symdet.symmetry_groups.data_clustering import DataCluster
 from symdet.analysis.model_visualization import Visualizer
 from typing import Tuple
+import numpy as np
+from sklearn.cluster import MeanShift
 
 
 class GroupDetection:
@@ -73,16 +75,41 @@ class GroupDetection:
         """
         pass
 
-    def _cluster_detection(self):
+    def _cluster_detection(self, classes: np.ndarray, data: np.ndarray, vis_data: np.ndarray):
         """
         Use the results of the TSNE reduction to extract clusters.
+
+        Parameters
+        ----------
+        classes : np.ndarray
+                A numpy array stating which class the i'th data point is in
+        data : np.ndarray
+                Results of the tsne representation
+        vis_data : np.ndarray
+                Raw data to be returned by class.
 
         Returns
         -------
         clusters : dict
                 An unordered point cloud of data belonging to the same cluster.
+                e.g. {1: [radial values], 2: [radial_values], ...}
         """
-        pass
+        net_array = np.concatenate((data, vis_data, np.array([classes]).T), 1)
+        sorted_data = net_array[np.argsort(net_array[:, -1])]
+        class_array = np.unique(classes)
+
+        ms = MeanShift()  # define the cluster algorithm
+
+        point_cloud = {}
+        # loop over the class array
+        for i, item in enumerate(class_array):
+            start = np.searchsorted(sorted_data[:, -1], item, side='left')
+            stop = np.searchsorted(sorted_data[:, -1], item, side='right') - 1
+            n_cluster = len(np.unique(ms.fit(sorted_data[start:stop, 0:len(data)]).labels_))
+            if n_cluster == 2:
+                point_cloud[item] = sorted_data[start:stop, len(data):-1]
+
+        return point_cloud
 
     def run_symmetry_detection(self, plot: bool = True, save: bool = False):
         """
@@ -99,7 +126,7 @@ class GroupDetection:
         None
         """
         validation_data, predictions = self._get_model_predictions()
-        colour_map, clusters, visualization_data = self.cluster._cluster_data(
+        colour_map, clusters, visualization_data = self.cluster.cluster_data(
             predictions, validation_data
         )
         representation = self.model.get_embedding_layer_representation(
@@ -107,4 +134,8 @@ class GroupDetection:
         )  # get the embedding layer
 
         visualizer = Visualizer(representation, colour_map)
-        visualizer.tsne_visualization(plot=plot, save=save)
+        data = visualizer.tsne_visualization(plot=plot, save=save)
+
+        point_cloud = self._cluster_detection(colour_map, data, visualization_data)
+
+        return point_cloud
