@@ -107,7 +107,7 @@ class GroupDetection:
             stop = np.searchsorted(sorted_data[:, -1], item, side='right') - 1
             n_cluster = len(np.unique(ms.fit(sorted_data[start:stop, 0:len(data)]).labels_))
             if n_cluster == 2:
-                point_cloud[item] = sorted_data[start:stop, len(data):-1]
+                point_cloud[item] = sorted_data[start:stop, data.shape[-1]:-1]
 
         return point_cloud
 
