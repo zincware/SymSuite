@@ -63,7 +63,6 @@ class DenseModel:
 
     def __init__(
         self,
-        data_dict: dict,
         n_layers: int = 5,
         units: int = 10,
         epochs: int = 20,
@@ -72,15 +71,14 @@ class DenseModel:
         lr: float = 1e-4,
         batch_size: int = 100,
         terminate_patience: int = 10,
-        lr_patience: int = 5,
-    ):
+        lr_patience: int = 5):
         """
-        Python constructor
+        Constructor fpr the Dense model class.
 
         Parameters
         ----------
         data_dict : dict
-                Dictionary of data where the key is the class name and the values are the coordinates belongin to that
+                Dictionary of data where the key is the class name and the values are the coordinates belonging to that
                 class. This is fundamentally a classification problem!
         n_layers : int
                 Number of hidden layers to use.
@@ -101,8 +99,9 @@ class DenseModel:
         lr_patience : int
                 Patience in the learning rate reduction.
         """
-        self.data_dict = data_dict
         self.n_layers = n_layers
+        self.data_dict = None
+        self.input_shape = None
         self.units = units
         self.epochs = epochs
         self.activation = activation
@@ -116,6 +115,22 @@ class DenseModel:
         self.val_ds = None
         self.model = None
 
+    def add_data(self, data: dict):
+        """
+        Add cluster data to the model.
+
+        Parameters
+        ----------
+        data : dict
+                Cluster data to be added to the class.
+
+        Returns
+        -------
+
+        """
+        self.data_dict = data
+        self.input_shape = len(self.data_dict[list(self.data_dict.keys())[0]]['domain'][0])
+
     def _shuffle_and_split_data(self):
         """
         shuffle and split the parsed dataset
@@ -127,11 +142,14 @@ class DenseModel:
 
         for key in self.data_dict:
             labels = tf.repeat(
-                tf.convert_to_tensor(np.array(key, dtype=float)),
-                len(self.data_dict[key]),
+                tf.convert_to_tensor(np.array(key), dtype=tf.float32),
+                len(self.data_dict[key]['domain']),
             )
-            stacked_data = tf.stack([self.data_dict[key], labels], axis=1)
-            stacked_data = tf.random.shuffle(stacked_data)
+
+            stacked_data = tf.concat([self.data_dict[key]['domain'],
+                                      tf.transpose([labels])],
+                                     axis=1)
+
             data_volume = len(stacked_data)
             train, test, validate = tf.split(
                 stacked_data,
@@ -145,19 +163,22 @@ class DenseModel:
             if self.train_ds is None:
                 self.train_ds = train
             else:
-                self.train_ds = tf.concat([self.train_ds, train], axis=0)
+                self.train_ds = tf.concat([self.train_ds, train],
+                                          axis=0)
             if self.test_ds is None:
                 self.test_ds = test
             else:
-                self.test_ds = tf.concat([self.test_ds, test], axis=0)
+                self.test_ds = tf.concat([self.test_ds, test],
+                                         axis=0)
             if self.val_ds is None:
                 self.val_ds = validate
             else:
-                self.val_ds = tf.concat([self.val_ds, validate], axis=0)
+                self.val_ds = tf.concat([self.val_ds, validate],
+                                        axis=0)
 
         self.train_ds = tf.random.shuffle(self.train_ds)
-        self.train_ds = tf.random.shuffle(self.train_ds)
-        self.train_ds = tf.random.shuffle(self.train_ds)
+        self.test_ds = tf.random.shuffle(self.test_ds)
+        self.val_ds = tf.random.shuffle(self.val_ds)
 
     def _build_model(self):
         """
@@ -169,7 +190,7 @@ class DenseModel:
         """
 
         model = tf.keras.Sequential()
-        input_layer = Input(shape=[1])
+        input_layer = Input(shape=[self.input_shape])
         model.add(input_layer)
 
         # Loop over the layers excluding one for the input_layer, the second last, the embedding, and the softmax layer
@@ -242,14 +263,9 @@ class DenseModel:
 
         return [terminating_callback, reduction_callback]
 
-    def train_model(self) -> tf.data.Dataset:
+    def train_model(self):
         """
         Collect other methods and train the ML model
-
-        Returns
-        -------
-        train_ds : tf.data.Dataset
-                the training data set. Should be changed perhaps to the validation but this is not essential.
         """
 
         self._shuffle_and_split_data()  # Build the datasets
@@ -260,19 +276,17 @@ class DenseModel:
         # Train the model
         for i in range(1, 6):
             self.model.fit(
-                x=self.train_ds[:, 0],
-                y=tf.keras.utils.to_categorical(self.train_ds[:, 1]),
+                x=self.train_ds[:, 0:self.input_shape],
+                y=tf.keras.utils.to_categorical(self.train_ds[:, -1]),
                 batch_size=self.batch_size,
                 shuffle=True,
                 validation_data=(
-                    self.test_ds[:, 0],
-                    tf.keras.utils.to_categorical(self.test_ds[:, 1]),
+                    self.test_ds[:, 0:self.input_shape],
+                    tf.keras.utils.to_categorical(self.test_ds[:, -1]),
                 ),
                 verbose=1,
                 epochs=self.epochs,
             )
-
-        return self.train_ds
 
     def _evaluate_model(self):
         """
@@ -284,7 +298,7 @@ class DenseModel:
         """
 
         attributes = self.model.evaluate(
-            x=self.val_ds[:, 0], y=tf.keras.utils.to_categorical(self.val_ds[:, 1])
+            x=self.val_ds[:, 0:self.input_shape], y=tf.keras.utils.to_categorical(self.val_ds[:, -1])
         )
         print(f"Loss: {attributes[0]} \n" f"Accuracy: {attributes[1]}")
 
@@ -304,10 +318,10 @@ class DenseModel:
         """
 
         model = tf.keras.Sequential()
-        input_data = Input(shape=[1])
+        input_data = Input(shape=[self.input_shape])
         model.add(input_data)
         for layer in self.model.layers[:-1]:
             model.add(layer)
 
         model.build()
-        return model.predict(data_array)
+        return model.predict(data_array[:, 0:self.input_shape])
