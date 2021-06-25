@@ -60,14 +60,12 @@ class DataGenerator(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def plot_clusters(self, clusters: dict, save: bool = False):
+    def plot_clusters(self, save: bool = False):
         """
         Plot the data clusters.
 
         Parameters
         ----------
-        clusters : dict
-                A dictionary of clusters and their representatives.
         save : bool
                 If true the figure will be saved.
 
@@ -96,3 +94,22 @@ class DataGenerator(metaclass=abc.ABCMeta):
 
         """
         pass
+
+    @abc.abstractmethod
+    def build_clusters(self, **kwargs):
+        """
+        Split the raw function data into classes.
+
+        Parameters
+        ----------
+        **kwargs
+
+        Returns
+        -------
+        Updates the class state.
+
+        Notes
+        -----
+        In the double well potential we can simply use the range_binning clustering algorithm.
+        """
+        raise None

@@ -14,11 +14,7 @@ from typing import Union
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 from tqdm import tqdm
-
-#plt.style.use('classic')
-#mpl.rcParams['figure.facecolor'] = 'white'
 
 
 class DoubleWellPotential(DataGenerator):
@@ -115,6 +111,7 @@ class DoubleWellPotential(DataGenerator):
         if type(points) is int:
             self._pick_points(points)
             self._double_well()
+
         # set domain and generate image data.
         else:
             self.domain = tf.convert_to_tensor(points)

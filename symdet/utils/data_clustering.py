@@ -124,3 +124,37 @@ def range_binning(
         clustered_data[class_keys[i]]['image'] = filtered_image[0:1000]
 
     return clustered_data
+
+
+def compute_com(data: np.ndarray):
+    """
+    Compute the center of mass of some data.
+
+    Parameters
+    ----------
+    data : np.ndarray
+            Data on which to compute the center of mass.
+
+    Returns
+    -------
+
+    """
+    return tf.reduce_mean(data, axis=0)
+
+
+def compute_radius_of_gyration(data: np.ndarray, com: np.ndarray):
+    """
+    Compute the radius of gyration of some data.
+
+    Parameters
+    ----------
+    data : np.ndarray
+    com : np.ndarray
+
+    Returns
+    -------
+
+    """
+    rg_primitive = tf.reduce_sum((data - com)**2, axis=1)
+
+    return tf.reduce_mean(rg_primitive, axis=0)

@@ -22,8 +22,8 @@ from symdet.ml_models.dense_model import DenseModel
 from symdet.analysis.model_visualization import Visualizer
 from typing import Tuple
 import numpy as np
-from sklearn.cluster import MeanShift
 import tensorflow as tf
+from symdet.utils.data_clustering import compute_com, compute_radius_of_gyration
 
 
 class GroupDetection:
@@ -109,25 +109,22 @@ class GroupDetection:
         clusters : dict
                 An unordered point cloud of data belonging to the same cluster.
                 e.g. {1: [radial values], 2: [radial_values], ...}
-
-        Notes
-        -----
-        Compute radius of gyration instead.
         """
         net_array = np.concatenate((data, function_data), 1)
         sorted_data = tf.gather(net_array, tf.argsort(net_array[:, -1])).numpy()
         class_array = np.unique(function_data[:, -1])
-
-        ms = MeanShift()  # define the cluster algorithm
 
         point_cloud = {}
         # loop over the class array
         for i, item in enumerate(class_array):
             start = np.searchsorted(sorted_data[:, -1], item, side='left')
             stop = np.searchsorted(sorted_data[:, -1], item, side='right') - 1
-            n_cluster = len(np.unique(ms.fit(sorted_data[start:stop, 0:len(data)]).labels_))
-            if n_cluster == 2:
-                point_cloud[item] = sorted_data[start:stop, len(data):-1]
+            com = compute_com(sorted_data[start:stop, 0:2])
+            rg = compute_radius_of_gyration(sorted_data[start:stop, 0:2], com)
+
+            # print(f"Class: {item}, COM: {com}, Rg: {rg}")
+            if rg > 1000:
+                point_cloud[item] = sorted_data[start:stop, 2:-1]
 
         return point_cloud
 
