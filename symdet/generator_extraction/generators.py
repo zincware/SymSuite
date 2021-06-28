@@ -117,9 +117,14 @@ class GeneratorExtraction:
         """
         pass
 
-    def _generate_basis_set(self):
+    def _generate_basis_set(self, gs_precision: int):
         """
         Build the basis set.
+
+        Parameters
+        ----------
+        gs_precision : int
+                Number of decimals after 0 to consider orthogonal.
 
         Returns
         -------
@@ -138,13 +143,18 @@ class GeneratorExtraction:
                 basis.append(self._perform_gs(item, basis))
 
         self.basis = tf.convert_to_tensor(basis)  # set the class attribute
-        self._gs_check()
+        self._gs_check(gs_precision)
 
-    def _gs_check(self):
+    def _gs_check(self, gs_precision: int):
         """
         Check to see that all basis vectors are orthogonal to one another.
 
         If this assert fails, the session will end.
+
+        Parameters
+        ----------
+        gs_precision : int
+                Number of decimals after 0 to consider orthogonal.
 
         Returns
         -------
@@ -155,7 +165,7 @@ class GeneratorExtraction:
             for test in self.basis:
                 if all(test == basis):
                     continue
-                np.testing.assert_almost_equal(np.dot(basis, test), 0)  # check the orthogonality.
+                np.testing.assert_almost_equal(np.dot(basis, test), 0, decimal=gs_precision)  # check the orthogonality.
 
     def _perform_gs(self, vector: list, basis_set: list) -> np.ndarray:
         """
@@ -378,7 +388,7 @@ class GeneratorExtraction:
             - (np.dot(pair[0], self.basis[1]) * np.dot(pair[1], self.basis[0]))
         )
 
-    def _extract_generators(self, pca_components: int) -> Tuple[np.ndarray, np.ndarray]:
+    def _extract_generators(self, pca_components: int, factor: bool = True) -> Tuple[np.ndarray, np.ndarray]:
         """
         Perform PCA on candidates and extract true generators.
 
@@ -391,6 +401,8 @@ class GeneratorExtraction:
         -------
         pca_components : np.ndarray
                 pca components.
+        factor : bool
+                If true, factor the values by the dimensionality.
         variance : np.ndarray
                 The explained variance list.
         """
@@ -400,7 +412,10 @@ class GeneratorExtraction:
 
         pca = PCA(n_components=pca_components)
         pca.fit(self.generator_candidates)
-        return np.sqrt(self.dimension) * pca.components_, pca.explained_variance_ratio_
+        if factor:
+            return np.sqrt(self.dimension) * pca.components_, pca.explained_variance_ratio_
+        else:
+            return pca.components_, pca.explained_variance_ratio_
 
     def _plot_results(self, std_values: list, save: bool = False):
         """
@@ -423,13 +438,18 @@ class GeneratorExtraction:
         plt.xticks(np.arange(len(std_values)), [i + 1 for i in range(len(std_values))])
         plt.xlim(-0.1, len(std_values) - 0.9)
         plt.ylim(-0.1, 1.1)
+        plt.grid()
         if save:
             plt.savefig("PCA_STD.svg", dpi=800, format="svg")
         plt.show()
 
     def perform_generator_extraction(
-        self, pca_components: int = 4, plot: bool = False, save: bool = False
-    ) -> Tuple:
+            self,
+            pca_components: int = 4,
+            plot: bool = False,
+            save: bool = False,
+            factor: bool = True,
+            gs_precision: int = 5) -> Tuple:
         """
         Collect all methods and perform the generator extraction.
 
@@ -439,8 +459,12 @@ class GeneratorExtraction:
                 Number of pca components to checked in the reduction.
         plot : bool
                 If True, the outcomes will be plotted.
+        factor : bool
+                If true, factor the values by the dimensionality.
         save : bool
                 If True, and plot is also True, the plots will be saved.
+        gs_precision : int
+                Number of decimals after 0 to consider orthogonal.
 
         Returns
         -------
@@ -455,14 +479,15 @@ class GeneratorExtraction:
                       desc="Producing generator candidates"):
             try:
                 self._remove_redundancy()
-                self._generate_basis_set()
+                self._generate_basis_set(gs_precision)
                 self._construct_hyperplane_set()
                 self._identify_point_pairs()
                 self._perform_regression()
             except ValueError:
                 continue
 
-        generators, std_array = self._extract_generators(pca_components=pca_components)
+        generators, std_array = self._extract_generators(pca_components=pca_components,
+                                                         factor=factor)
         for i, item in enumerate(generators):
             print(f"Principle Component {i + 1}: Explained Variance: {std_array[i]}")
             print(item.reshape((self.dimension, self.dimension)))

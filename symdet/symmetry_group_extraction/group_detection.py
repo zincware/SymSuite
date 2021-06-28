@@ -122,7 +122,7 @@ class GroupDetection:
             com = compute_com(sorted_data[start:stop, 0:2])
             rg = compute_radius_of_gyration(sorted_data[start:stop, 0:2], com)
 
-            # print(f"Class: {item}, COM: {com}, Rg: {rg}")
+            #print(f"Class: {item}, COM: {com}, Rg: {rg}")
             if rg > 1000:
                 point_cloud[item] = sorted_data[start:stop, 2:-1]
 
