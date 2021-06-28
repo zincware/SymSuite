@@ -8,14 +8,14 @@ and modules become available.
    :maxdepth: 1
 
    _modules/analysis/model_visualization
-   _modules/generators/generators
-   _modules/models/dense_model
-   _modules/symmetry_groups/data_clustering
-   _modules/symmetry_groups/group_detection
-   _modules/test_systems/potential
-   _modules/test_systems/double_well_potential
-   _modules/test_systems/so2
-   _modules/test_systems/so3
+   _modules/data/data_generator
+   _modules/data/double_well_potential
+   _modules/data/so2_data
+   _modules/data/so3_data
+   _modules/generator_extraction/generators
+   _modules/ml_model/dense_model
+   _modules/symmetry_group_extraction/group_detection
+   _modules/utils/data_clustering
 
 
 
