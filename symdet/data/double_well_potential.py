@@ -179,7 +179,8 @@ class DoubleWellPotential(DataGenerator):
         value_range : list
             The parameters within which to bin e.g.  k in [-5, 5]
         bin_operation : list
-            Operation to apply to the bins e.g [1/5, 1e-3] will lead to bins of the form [k/5 - 1e-3, k/5 + 1e-3]
+            Operation to apply to the bins e.g [1/5, 1e-3] will lead
+            to bins of the form [k/5 - 1e-3, k/5 + 1e-3]
 
         Returns
         -------

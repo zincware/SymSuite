@@ -98,7 +98,9 @@ def range_binning(
     """
     # Construct the classes and their range.
     bin_values = {}
-    for k in np.linspace(value_range[0], value_range[1], 11, dtype=int):
+    n_classes = (value_range[1] - value_range[0]) + 1
+
+    for k in np.linspace(value_range[0], value_range[1], n_classes, dtype=int):
         bin_values[f"{k + abs(value_range[0])}"] = [
             bin_operation[0] * k - bin_operation[1],
             bin_operation[0] * k + bin_operation[1],
@@ -109,9 +111,8 @@ def range_binning(
 
     # Check that there is enough data in each class.
     bin_count = tf.reduce_sum(tf.cast(bin_masks, tf.int8), 1)
-    if all(bin_count) > representatives is False:
-        print("Not enough data, please provide more")
-        sys.exit(0)
+    if any(bin_count) < representatives:
+        print("WARNING: Not enough data! Some classes will be under-represented.")
 
     class_keys = list(bin_values.keys())
 
@@ -120,8 +121,8 @@ def range_binning(
         clustered_data[class_keys[i]] = {}
         filtered_domain = tf.boolean_mask(domain, bin_masks[i])
         filtered_image = tf.boolean_mask(image, bin_masks[i])
-        clustered_data[class_keys[i]]['domain'] = filtered_domain[0:1000]
-        clustered_data[class_keys[i]]['image'] = filtered_image[0:1000]
+        clustered_data[class_keys[i]]['domain'] = filtered_domain[0:representatives]
+        clustered_data[class_keys[i]]['image'] = filtered_image[0:representatives]
 
     return clustered_data
 

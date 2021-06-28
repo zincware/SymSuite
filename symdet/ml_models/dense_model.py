@@ -146,7 +146,7 @@ class DenseModel:
                 len(self.data_dict[key]['domain']),
             )
 
-            stacked_data = tf.concat([self.data_dict[key]['domain'],
+            stacked_data = tf.concat([tf.cast(self.data_dict[key]['domain'], dtype=tf.float32),
                                       tf.transpose([labels])],
                                      axis=1)
 

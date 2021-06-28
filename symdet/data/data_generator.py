@@ -43,7 +43,6 @@ class DataGenerator(metaclass=abc.ABCMeta):
         self.domain_shape = None
         self.clustered_data = None
 
-    @abc.abstractmethod
     def plot_data(self, save: bool = False):
         """
         Plot the data.
@@ -57,9 +56,8 @@ class DataGenerator(metaclass=abc.ABCMeta):
         -------
 
         """
-        pass
+        raise NotImplementedError
 
-    @abc.abstractmethod
     def plot_clusters(self, save: bool = False):
         """
         Plot the data clusters.
@@ -73,9 +71,8 @@ class DataGenerator(metaclass=abc.ABCMeta):
         -------
 
         """
-        pass
+        raise NotImplementedError
 
-    @abc.abstractmethod
     def load_data(self, points: Union[int, np.ndarray], save: bool = False):
         """
         Load some data either from a computation or from a pool into the class state.
@@ -93,9 +90,8 @@ class DataGenerator(metaclass=abc.ABCMeta):
         -------
 
         """
-        pass
+        raise NotImplementedError
 
-    @abc.abstractmethod
     def build_clusters(self, **kwargs):
         """
         Split the raw function data into classes.
@@ -112,4 +108,4 @@ class DataGenerator(metaclass=abc.ABCMeta):
         -----
         In the double well potential we can simply use the range_binning clustering algorithm.
         """
-        raise None
+        raise NotImplementedError
