@@ -3,10 +3,13 @@ Configuration file for the Sphinx documentation builder.
 """
 import os
 import sys
+import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath("."))
 sys.path.insert(0, os.path.abspath("../../"))
-html_theme = "insegel"
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
+html_theme = "sphinx_rtd_theme"
 
 # -- Project information -----------------------------------------------------
 

@@ -10,4 +10,3 @@ IPython
 pandoc
 numpydoc
 pre-commit
-insegel
