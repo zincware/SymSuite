@@ -10,4 +10,4 @@ IPython
 pandoc
 numpydoc
 pre-commit
-insegel
+sphinx-material
