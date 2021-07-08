@@ -10,3 +10,4 @@ IPython
 pandoc
 numpydoc
 pre-commit
+sphinx-material
