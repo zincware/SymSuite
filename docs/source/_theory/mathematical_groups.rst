@@ -2,9 +2,9 @@ Mathematical Groups
 ===================
 
 We will talk a lot about groups and Lie groups in the theory sections, so it is important to have some
-background on what a group is and why they are interesting. The first step is understanding up the
+background on what a group is and why they are interesting. The first step is understanding the
 notion of a *set*. Without getting into the details (and there are many details), a set is a collection of objects
-which may or may not have a relationship to one another. The integers are a archetypal example of a *set* which we
+which may or may not have a relationship to one another. The integers are an archetypal example of a *set* which we
 write as:
 
 .. math::
@@ -121,9 +121,9 @@ of the theory and if interested, you should go and see the :ref:`algebra` part o
 studying operations in physics, we will often come across certain symmetries. These can arise in all areas from
 classical mechanics and quantum mechanics through general relativity and string theory. These symmetries allow us to
 make some assumptions about what it is we are studying. If the operators we are studying appear to form a Lie group,
-we can then use all the information and properties of Lie groups as mathematical tools to study our system. This is,
-it a vastly simplified summary, the benefit of identifying and understanding Lie groups. On a mathematical level, the
-benefits of Lie groups arise mostly in their underlying algebra, and so I will leave it to the algebra section to
+we can then use all the information and properties of Lie groups as mathematical tools to study our system.
+This is -- in a vastly simplified summary -- the benefit of identifying and understanding Lie groups. On a mathematical level, the
+benefits of Lie groups arise mostly in their underlying algebra and so I will leave it to the algebra section to
 outline these.
 
 References
