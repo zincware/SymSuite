@@ -15,7 +15,9 @@ While this is in fact Algebra the concept goes far beyond replacing some numbers
 with letters and torturing students for hours on end with systems of linear
 equations.
 
-*More to come*
+An algebra in general is some structure made up of elements that one can add,
+multiply by each other, and scale. These can take many forms, one of which
+is directly related to the symmetry detection work performed by SymDet.
 
 Lie Algebra
 ^^^^^^^^^^^
