@@ -14,9 +14,16 @@ I would not expect major API breaks but certainly addition of functionality.
 
 Installation
 ============
-Currently it is only possible to install SymDet from source and it will remain
-like this until it has been thoroughly tested on experimental data and a larger
-number of symmetry groups.
+There are several options for installing SymDet
+
+PyPi
+****
+
+We host the code on PyPi and so it can be simply installed by:
+
+.. code-block:: bash
+
+   pip3 install symdet
 
 Install from source
 *******************
@@ -25,7 +32,7 @@ Install from source
 
 .. code-block:: bash
 
-   git clone https://github.com/SamTov/SymDet.git
+   git clone https://github.com/zincware/SymDet.git
    cd SymDet
    pip3 install . --user
 
@@ -33,7 +40,7 @@ Install from source
 
 .. code-block:: bash
 
-   git clone https://github.com/SamTov/SymDet.git
+   git clone https://github.com/zincware/SymDet.git
    cd SymDet
    conda create -n SymDet python=3.8
    conda activate SymDet
@@ -56,20 +63,10 @@ You can then browse the documentation locally using your favourite browser.
 Getting started
 ===============
 
-Because SymDet is not designed for single purpose, you will need to interface
-with different libraries and classes directly. This isn't as bad as it sounds
-and we have a number of tutorials to explain how this works. Broadly there
-are two modules relevant to most analysis, these are the analysis and
-generators modules.
-
-* **analysis**: This module contains the necessary methods for analyzing raw
-  data and extraction symmetry groups from it.
-* **generators**: This module contains all of the modules necessary for
-  extracting Lie group generators from the symmetry groups.
-  
 As a first step I would suggest looking at the
-`examples <https://github.com/SamTov/SymDet/tree/main/examples>`_
+`examples <https://github.com/zincware/SymDet/tree/main/examples>`_
 directory and following along with some tutorials.
+From here you may get a better idea of what you can use this package for.
 
 Comments
 ========
