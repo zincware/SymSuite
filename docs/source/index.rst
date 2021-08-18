@@ -40,6 +40,7 @@ At the moment the code can perform the following tasks.
 .. toctree::
    :maxdepth: 1
    :caption: User Guide:
+
    notebooks
    modules
 
