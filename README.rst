@@ -87,7 +87,7 @@ mathematician) I would always welcome the feedback.
     :alt: Build tests passing
     :target: https://symdet.readthedocs.io/en/latest/
 
-.. |license| image:: https://img.shields.io/badge/License-GPLv3.0-green.svg
+.. |license| image:: https://img.shields.io/badge/License-EPLv2.0-purple.svg?style=flat
     :alt: Project license
     :target: https://www.gnu.org/licenses/quick-guide-gplv3.en.html
 
