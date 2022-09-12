@@ -8,8 +8,8 @@ Copyright Contributors to the Zincware Project.
 
 Description: Example data generator for the double well potential.
 """
-from symdet.data.data_generator import DataGenerator
-from symdet.utils.data_clustering import range_binning
+from symsuite.data.data_generator import DataGenerator
+from symsuite.utils.data_clustering import range_binning
 from typing import Union
 import numpy as np
 import tensorflow as tf
@@ -32,7 +32,7 @@ class DoubleWellPotential(DataGenerator):
 
     Examples
     --------
-    >>> from symdet import DoubleWellPotential
+    >>> from symsuite import DoubleWellPotential
     >>> generator = DoubleWellPotential()
     >>> generator.load_data()
     >>> generator.plot_data()
@@ -137,6 +137,9 @@ class DoubleWellPotential(DataGenerator):
             plt.plot(r, v, '.', label=f"Class {i}", markersize=15)
 
         plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+        if save:
+            plt.savefig('Clusters.png', dpi=600)
 
         plt.show()
 

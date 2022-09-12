@@ -8,7 +8,7 @@ Copyright Contributors to the Zincware Project.
 
 Description: Module for the computation of so2 data
 """
-from symdet.data.data_generator import DataGenerator
+from symsuite.data.data_generator import DataGenerator
 from typing import Union
 import numpy as np
 import matplotlib.pyplot as plt
@@ -35,7 +35,7 @@ class SO2(DataGenerator):
 
     Examples
     --------
-    >>> from symdet import DoubleWellPotential
+    >>> from symsuite import DoubleWellPotential
     >>> generator = SO2()
     >>> generator.load_data()
     >>> generator.plot_data()

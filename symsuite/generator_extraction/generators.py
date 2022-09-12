@@ -380,7 +380,9 @@ class GeneratorExtraction:
             - (np.dot(pair[0], self.basis[1]) * np.dot(pair[1], self.basis[0]))
         )
 
-    def _extract_generators(self, pca_components: int, factor: bool = True) -> Tuple[np.ndarray, np.ndarray]:
+    def _extract_generators(
+            self, pca_components: object, factor: object = True
+    ) -> tuple:
         """
         Perform PCA on candidates and extract true generators.
 
@@ -407,7 +409,7 @@ class GeneratorExtraction:
         if factor:
             return np.sqrt(self.dimension) * pca.components_, pca.explained_variance_ratio_
         else:
-            return pca.components_, pca.explained_variance_ratio_
+            return (pca.components_, pca.explained_variance_ratio_)
 
     def _plot_results(self, std_values: list, save: bool = False):
         """
