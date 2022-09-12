@@ -8,7 +8,6 @@ Copyright Contributors to the Zincware Project.
 
 Description: Methods to help with clustering data.
 """
-import sys
 from typing import Tuple
 
 import jax.numpy as jnp
@@ -45,7 +44,7 @@ def _build_condlist(data: np.array, bin_values: dict) -> Tuple:
     return conditions, classes
 
 
-def _function_to_bins(function_values: tf.Tensor, bin_values: dict) -> tf.Tensor:
+def _function_to_bins(function_values: jnp.ndarray, bin_values: dict) -> jnp.ndarray:
     """
     Sort function values into bins.
 
@@ -67,9 +66,28 @@ def _function_to_bins(function_values: tf.Tensor, bin_values: dict) -> tf.Tensor
     return jnp.array(conditions)
 
 
+def to_categorical(data: jnp.ndarray):
+    """
+    Implementation of the keras.to_categorical function
+
+    Parameters
+    ----------
+    data : jnp.ndarray (n_points,)
+
+    Returns
+    -------
+    categorical_data : jnp.ndarray (n_points, n_classes)
+            Data converted into categorical format.
+    """
+    order = int(max(data) + 1)
+    classes = jnp.eye(order)
+
+    return jnp.take(classes, data, axis=0)
+
+
 def range_binning(
-    image: jnp.ndarrau,
-    domain: jnp.ndarrau,
+    image: jnp.ndarray,
+    domain: jnp.ndarray,
     value_range: list,
     bin_operation: list,
     representatives: int = 100,
@@ -110,7 +128,7 @@ def range_binning(
     bin_masks = _function_to_bins(image, bin_values)
 
     # Check that there is enough data in each class.
-    bin_count = tf.reduce_sum(tf.cast(bin_masks, tf.int8), 1)
+    bin_count = jnp.sum(bin_masks.astype(int), axis=1)
     if any(bin_count) < representatives:
         print("WARNING: Not enough data! Some classes will be under-represented.")
 
@@ -119,8 +137,8 @@ def range_binning(
     clustered_data = {}
     for i in range(len(class_keys)):
         clustered_data[class_keys[i]] = {}
-        filtered_domain = tf.boolean_mask(domain, bin_masks[i])
-        filtered_image = tf.boolean_mask(image, bin_masks[i])
+        filtered_domain = domain[bin_masks[i]]
+        filtered_image = image[bin_masks[i]]
         clustered_data[class_keys[i]]["domain"] = filtered_domain[0:representatives]
         clustered_data[class_keys[i]]["image"] = filtered_image[0:representatives]
 
@@ -140,7 +158,7 @@ def compute_com(data: np.ndarray):
     -------
 
     """
-    return tf.reduce_mean(data, axis=0)
+    return jnp.mean(data, axis=0)
 
 
 def compute_radius_of_gyration(data: np.ndarray, com: np.ndarray):
@@ -156,6 +174,6 @@ def compute_radius_of_gyration(data: np.ndarray, com: np.ndarray):
     -------
 
     """
-    rg_primitive = tf.reduce_sum((data - com) ** 2, axis=1)
+    rg_primitive = jnp.sum((data - com) ** 2, axis=1)
 
-    return tf.reduce_mean(rg_primitive, axis=0)
+    return jnp.mean(rg_primitive, axis=0)

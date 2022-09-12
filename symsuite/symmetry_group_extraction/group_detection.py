@@ -14,11 +14,14 @@ from typing import Tuple
 
 import jax.numpy as jnp
 import numpy as np
-import tensorflow as tf
 
 from symsuite.analysis.model_visualization import Visualizer
 from symsuite.ml_models.dense_model import DenseModel
-from symsuite.utils.data_clustering import compute_com, compute_radius_of_gyration
+from symsuite.utils.data_clustering import (
+    compute_com,
+    compute_radius_of_gyration,
+    to_categorical,
+)
 
 
 class GroupDetection:
@@ -148,7 +151,7 @@ class GroupDetection:
 
         """
         accepted_candidates = np.zeros(len(predictions))
-        target_values = tf.keras.utils.to_categorical(targets[:, -1])
+        target_values = to_categorical(targets[:, -1])
         counter = 0
         for i, item in enumerate(predictions):
             if np.linalg.norm(predictions[i] - target_values[i]) <= 2e-1:
@@ -156,7 +159,7 @@ class GroupDetection:
                 counter += 1
         accepted_candidates = jnp.array(accepted_candidates[0:counter], dtype=int)
 
-        return tf.gather(targets, accepted_candidates)
+        return jnp.take(targets, accepted_candidates, axis=0)
 
     def run_symmetry_detection(self, plot: bool = True, save: bool = False):
         """
