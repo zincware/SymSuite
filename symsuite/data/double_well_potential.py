@@ -12,7 +12,8 @@ from symsuite.data.data_generator import DataGenerator
 from symsuite.utils.data_clustering import range_binning
 from typing import Union
 import numpy as np
-import tensorflow as tf
+import jax
+import jax.numpy as jnp
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
@@ -66,8 +67,8 @@ class DoubleWellPotential(DataGenerator):
         -------
 
         """
-        square_radii = tf.reduce_sum(tf.math.square(self.domain), 1)
-        self.image = -self.a * square_radii + tf.square(square_radii)
+        square_radii = jnp.sum(self.domain ** 2, axis=1)
+        self.image = -self.a * square_radii + square_radii ** 2
 
     def _pick_points(self, n_points: int, min_val: float = 0, max_val: float = 1.6):
         """
@@ -84,11 +85,13 @@ class DoubleWellPotential(DataGenerator):
 
         Returns
         -------
-
+        Updates the class attributes.
         """
-        self.domain = tf.random.uniform(shape=(n_points, 2),
-                                        minval=min_val,
-                                        maxval=max_val)
+        key = jax.random.PRNGKey(0)
+        key, subkey = jax.random.split(key)
+        self.domain = jax.random.uniform(
+            subkey, shape=(n_points, 2), minval=min_val, maxval=max_val
+        )
 
     def load_data(self, points: Union[int, np.ndarray], save: bool = False):
         """
@@ -97,9 +100,10 @@ class DoubleWellPotential(DataGenerator):
         Parameters
         ----------
         points : Union[int, np.ndarray]
-                Points to generate, either an np.ndarray or an integer. If an integer, N points will be generated, if
-                an array, it will either be treated as input to a function to generate values or those indices will be
-                drawn from a pool.
+                Points to generate, either an np.ndarray or an integer. If an integer,
+                N points will be generated, if an array, it will either be treated as
+                input to a function to generate values or those indices will be drawn
+                from a pool.
         save : bool
                 If true, save the data after generating it.
 
@@ -114,7 +118,7 @@ class DoubleWellPotential(DataGenerator):
 
         # set domain and generate image data.
         else:
-            self.domain = tf.convert_to_tensor(points)
+            self.domain = jnp.array(points)
             self._double_well()
 
     def plot_clusters(self, save: bool = False):
@@ -131,8 +135,10 @@ class DoubleWellPotential(DataGenerator):
         """
         self.plot_data(show=False)
 
-        for i, item in tqdm(enumerate(self.clustered_data), ncols=70, total=len(self.clustered_data)):
-            r = tf.norm(self.clustered_data[item]['domain'], axis=1)
+        for i, item in tqdm(
+                enumerate(self.clustered_data), ncols=70, total=len(self.clustered_data)
+        ):
+            r = jnp.linalg.norm(self.clustered_data[item]['domain'], axis=1)
             v = self.clustered_data[item]['image']
             plt.plot(r, v, '.', label=f"Class {i}", markersize=15)
 
@@ -160,7 +166,7 @@ class DoubleWellPotential(DataGenerator):
         if self.domain is None:
             self._pick_points(1000, min_val=0, max_val=1.2)
             self._double_well()
-        plt.plot(tf.norm(self.domain, axis=1), self.image, '.')
+        plt.plot(jnp.linalg.norm(self.domain, axis=1), self.image, '.')
         plt.xlabel('r')
         plt.ylabel('V')
         plt.xlim(-0.03, 1.7)
@@ -171,7 +177,12 @@ class DoubleWellPotential(DataGenerator):
         if show:
             plt.show()
 
-    def build_clusters(self, value_range: list = None, bin_operation: list = None, representatives=1000):
+    def build_clusters(
+            self,
+            value_range: list = None,
+            bin_operation: list = None,
+            representatives=1000
+    ):
         """
         Split the raw function data into classes.
 
@@ -191,7 +202,8 @@ class DoubleWellPotential(DataGenerator):
 
         Notes
         -----
-        In the double well potential we can simply use the range_binning clustering algorithm.
+        In the double well potential we can simply use the range_binning clustering
+        algorithm.
         """
         # Replace None type parameters.
         if bin_operation is None:

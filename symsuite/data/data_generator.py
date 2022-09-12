@@ -12,7 +12,7 @@ routines through a data generator child class.
 import abc
 from typing import Union
 import numpy as np
-import tensorflow as tf
+import jax.numpy as jnp
 
 
 class DataGenerator(metaclass=abc.ABCMeta):

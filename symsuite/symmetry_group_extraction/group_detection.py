@@ -14,8 +14,9 @@ from symsuite.ml_models.dense_model import DenseModel
 from symsuite.analysis.model_visualization import Visualizer
 from typing import Tuple
 import numpy as np
-import tensorflow as tf
+import jax.numpy as jnp
 from symsuite.utils.data_clustering import compute_com, compute_radius_of_gyration
+import tensorflow as tf
 
 
 class GroupDetection:
@@ -32,7 +33,12 @@ class GroupDetection:
             Which set to use in the representation, train, validation, or test.
     """
 
-    def __init__(self, model: DenseModel, data_clusters: dict, representation_set: str = 'train'):
+    def __init__(
+            self,
+            model: DenseModel,
+            data_clusters: dict,
+            representation_set: str = 'train'
+    ):
         """
         Constructor for the GroupDetection class.
 
@@ -64,13 +70,16 @@ class GroupDetection:
         self.model.train_model()
         if self.representation_set == 'train':
             val_data = self.model.train_ds
-            predictions = self.model.model.predict(val_data[:, 0:self.model.input_shape])
+            predictions = self.model.model.predict(
+                val_data[:, 0:self.model.input_shape])
         elif self.representation_set == 'test:':
             val_data = self.model.test_ds
-            predictions = self.model.model.predict(val_data[:, 0:self.model.input_shape])
+            predictions = self.model.model.predict(
+                val_data[:, 0:self.model.input_shape])
         else:
             val_data = self.model.val_ds
-            predictions = self.model.model.predict(val_data[:, 0:self.model.input_shape])
+            predictions = self.model.model.predict(
+                val_data[:, 0:self.model.input_shape])
 
         return val_data, predictions
 
@@ -103,7 +112,7 @@ class GroupDetection:
                 e.g. {1: [radial values], 2: [radial_values], ...}
         """
         net_array = np.concatenate((data, function_data), 1)
-        sorted_data = tf.gather(net_array, tf.argsort(net_array[:, -1])).numpy()
+        sorted_data = jnp.take(net_array, jnp.argsort(net_array[:, -1]))
         class_array = np.unique(function_data[:, -1])
 
         point_cloud = {}
@@ -114,22 +123,22 @@ class GroupDetection:
             com = compute_com(sorted_data[start:stop, 0:2])
             rg = compute_radius_of_gyration(sorted_data[start:stop, 0:2], com)
 
-            #print(f"Class: {item}, COM: {com}, Rg: {rg}")
+            # print(f"Class: {item}, COM: {com}, Rg: {rg}")
             if rg > 1000:
                 point_cloud[item] = sorted_data[start:stop, 2:-1]
 
         return point_cloud
 
     @staticmethod
-    def _filter_data(predictions: tf.Tensor, targets: tf.Tensor):
+    def _filter_data(predictions: jnp.ndarray, targets: jnp.ndarray):
         """
         Check which data points are predicted well and include them in the data.
 
         Parameters
         ----------
-        targets : tf.Tensor
+        targets : jnp.ndarray
                 Target values on which predictions were made.
-        predictions : tf.Tensor
+        predictions : jnp.ndarray
                 Network predictions.
 
         Returns
@@ -143,7 +152,9 @@ class GroupDetection:
             if np.linalg.norm(predictions[i] - target_values[i]) <= 2e-1:
                 accepted_candidates[counter] = i
                 counter += 1
-        accepted_candidates = tf.convert_to_tensor(accepted_candidates[0:counter], dtype=tf.int32)
+        accepted_candidates = jnp.array(
+            accepted_candidates[0:counter], dtype=int
+        )
 
         return tf.gather(targets, accepted_candidates)
 
@@ -163,7 +174,8 @@ class GroupDetection:
         """
         validation_data, predictions = self._get_model_predictions()
         accepted_data = self._filter_data(predictions, validation_data)
-        representation = self.model.get_embedding_layer_representation(accepted_data)  # get the embedding layer
+        representation = self.model.get_embedding_layer_representation(
+            accepted_data)  # get the embedding layer
 
         visualizer = Visualizer(representation, accepted_data[:, -1])
         data = visualizer.tsne_visualization(plot=plot, save=save)

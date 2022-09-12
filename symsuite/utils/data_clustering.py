@@ -8,7 +8,7 @@ Copyright Contributors to the Zincware Project.
 
 Description: Methods to help with clustering data.
 """
-import tensorflow as tf
+import jax.numpy as jnp
 import numpy as np
 from typing import Tuple
 import sys
@@ -59,18 +59,18 @@ def _function_to_bins(function_values: tf.Tensor, bin_values: dict) -> tf.Tensor
 
     Returns
     -------
-    conditions : tf.Tensor
+    conditions : jnp.ndarrau
             Conditions from the cond list build.
     """
 
     conditions, functions = _build_condlist(function_values, bin_values)
 
-    return tf.convert_to_tensor(conditions)
+    return jnp.array(conditions)
 
 
 def range_binning(
-        image: tf.Tensor,
-        domain: tf.Tensor,
+        image: jnp.ndarrau,
+        domain: jnp.ndarrau,
         value_range: list,
         bin_operation: list,
         representatives: int = 100) -> dict:
@@ -79,9 +79,9 @@ def range_binning(
 
     Parameters
     ----------
-    image : tf.Tensor
+    image : jnp.ndarrau
             data to cluster.
-    domain : tf.Tensor
+    domain : jnp.ndarrau
             data pool to return clustered.
     representatives : int
             Number of class representatives to have for each bin.

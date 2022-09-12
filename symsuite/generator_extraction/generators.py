@@ -10,7 +10,7 @@ Generators
 ==========
 Python module to extract generators from data.
 """
-import tensorflow as tf
+import jax.numpy as jnp
 import numpy as np
 from tqdm import tqdm
 import random
@@ -52,7 +52,7 @@ class GeneratorExtraction:
 
     def __init__(
         self,
-        point_cloud: tf.Tensor,
+        point_cloud: jnp.array,
         delta: float = 0.5,
         epsilon: float = 0.3,
         candidate_runs: int = 10,
@@ -77,8 +77,8 @@ class GeneratorExtraction:
         self.epsilon = epsilon
         self.candidate_runs = candidate_runs
 
-        self.basis: tf.Tensor
-        self.hyperplane_set: tf.Tensor
+        self.basis: jnp.ndarray
+        self.hyperplane_set: jnp.ndarray
         self.point_pairs: list
         self.dimension = self._get_dimension()
 
@@ -134,7 +134,7 @@ class GeneratorExtraction:
             for item in reduced_candidates:
                 basis.append(self._perform_gs(item, basis))
 
-        self.basis = tf.convert_to_tensor(basis)  # set the class attribute
+        self.basis = jnp.array(basis)  # set the class attribute
         self._gs_check(gs_precision)
 
     def _gs_check(self, gs_precision: int):
@@ -153,11 +153,14 @@ class GeneratorExtraction:
         Will throw an exception if the assert fails.
         """
         for basis in self.basis:
-            np.testing.assert_almost_equal(np.linalg.norm(basis), 1)  # check the normalization.
+            # check the normalization.
+            np.testing.assert_almost_equal(np.linalg.norm(basis), 1)
             for test in self.basis:
                 if all(test == basis):
                     continue
-                np.testing.assert_almost_equal(np.dot(basis, test), 0, decimal=gs_precision)  # check the orthogonality.
+                np.testing.assert_almost_equal(
+                    np.dot(basis, test), 0, decimal=gs_precision
+                )  # check the orthogonality.
 
     def _perform_gs(self, vector: list, basis_set: list) -> np.ndarray:
         """
@@ -178,7 +181,7 @@ class GeneratorExtraction:
         for basis_item in basis_set:
             basis_vector -= self._projection_operator(basis_item, basis_vector)
 
-        return basis_vector / np.linalg.norm(basis_vector)
+        return jnp.array(basis_vector) / np.linalg.norm(basis_vector)
 
     def _eliminate_closest_vector(
             self,
@@ -258,7 +261,7 @@ class GeneratorExtraction:
 
                 if all(truth_table):
                     self.hyperplane_set.append(point)
-        self.hyperplane_set = tf.convert_to_tensor(self.hyperplane_set)
+        self.hyperplane_set = jnp.array(self.hyperplane_set)
 
     def _identify_point_pairs(self):
         """
@@ -336,28 +339,31 @@ class GeneratorExtraction:
 
     def _simple_regression(self):
         """
-        In the case where additional constraints are not needed, we simply perform regression on the problem to
-        extract generator candidates.
+        In the case where additional constraints are not needed, we simply perform
+        regression on the problem to extract generator candidates.
 
         Returns
         -------
         Updates the class state.
         """
-        Y = []
-        X = []
+        y_data = []
+        x_data = []
         for pair in self.point_pairs:
             points = [self.hyperplane_set[pair[0]], self.hyperplane_set[pair[1]]]
             sigma = self._compute_sigma(points)
-            Y.append(
+            y_data.append(
                 ((points[0] - points[1]) * np.linalg.norm(points[0]))
                 / (sigma * np.linalg.norm(points[1] - points[0]))
             )
-            X.append(points[0])
+            x_data.append(points[0])
 
         generator = []
         for i in range(self.dimension):
             generator = np.concatenate(
-                (generator, LinearRegression().fit(X, np.array(Y)[:, i]).coef_)
+                (
+                    generator,
+                    LinearRegression().fit(x_data, np.array(y_data)[:, i]).coef_
+                )
             )
 
         self.generator_candidates.append(generator)
@@ -407,9 +413,11 @@ class GeneratorExtraction:
         pca = PCA(n_components=pca_components)
         pca.fit(self.generator_candidates)
         if factor:
-            return np.sqrt(self.dimension) * pca.components_, pca.explained_variance_ratio_
+            return (
+                np.sqrt(self.dimension) * pca.components_, pca.explained_variance_ratio_
+            )
         else:
-            return (pca.components_, pca.explained_variance_ratio_)
+            return pca.components_, pca.explained_variance_ratio_
 
     def _plot_results(self, std_values: list, save: bool = False):
         """
@@ -480,8 +488,9 @@ class GeneratorExtraction:
             except ValueError:
                 continue
 
-        generators, std_array = self._extract_generators(pca_components=pca_components,
-                                                         factor=factor)
+        generators, std_array = self._extract_generators(
+            pca_components=pca_components, factor=factor
+        )
         for i, item in enumerate(generators):
             print(f"Principle Component {i + 1}: Explained Variance: {std_array[i]}")
             print(item.reshape((self.dimension, self.dimension)))
