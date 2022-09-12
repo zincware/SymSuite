@@ -2,8 +2,9 @@
 Setup.py file for the SymDet package.
 """
 
-import setuptools
 from os import path
+
+import setuptools
 
 here = path.abspath(path.dirname(__file__))
 with open(path.join(here, "requirements.txt")) as requirements_file:

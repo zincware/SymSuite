@@ -2,9 +2,10 @@
 Python module to show generator extraction of SO(2) Lie algebra generators.
 """
 
-from symsuite.test_systems.so2_data import SO2
-from symsuite.generators.generators import GeneratorExtraction
 import numpy as np
+
+from symsuite.generators.generators import GeneratorExtraction
+from symsuite.test_systems.so2_data import SO2
 
 
 def generator_extraction():

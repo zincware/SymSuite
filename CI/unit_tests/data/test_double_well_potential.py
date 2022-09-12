@@ -9,6 +9,7 @@ Copyright Contributors to the Zincware Project.
 Description: Test the double_well_potential module.
 """
 import unittest
+
 from symsuite.data.double_well_potential import DoubleWellPotential
 
 
@@ -52,5 +53,5 @@ class TestDoubleWellPotential(unittest.TestCase):
         self.assertEqual(len(self.generator.image), 500)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

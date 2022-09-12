@@ -10,13 +10,15 @@ Group Detection
 ===============
 Cluster raw data into symmetry groups
 """
-from symsuite.ml_models.dense_model import DenseModel
-from symsuite.analysis.model_visualization import Visualizer
 from typing import Tuple
-import numpy as np
+
 import jax.numpy as jnp
-from symsuite.utils.data_clustering import compute_com, compute_radius_of_gyration
+import numpy as np
 import tensorflow as tf
+
+from symsuite.analysis.model_visualization import Visualizer
+from symsuite.ml_models.dense_model import DenseModel
+from symsuite.utils.data_clustering import compute_com, compute_radius_of_gyration
 
 
 class GroupDetection:
@@ -34,10 +36,7 @@ class GroupDetection:
     """
 
     def __init__(
-            self,
-            model: DenseModel,
-            data_clusters: dict,
-            representation_set: str = 'train'
+        self, model: DenseModel, data_clusters: dict, representation_set: str = "train"
     ):
         """
         Constructor for the GroupDetection class.
@@ -68,18 +67,21 @@ class GroupDetection:
                 Embedding layer of the NN on validation data.
         """
         self.model.train_model()
-        if self.representation_set == 'train':
+        if self.representation_set == "train":
             val_data = self.model.train_ds
             predictions = self.model.model.predict(
-                val_data[:, 0:self.model.input_shape])
-        elif self.representation_set == 'test:':
+                val_data[:, 0 : self.model.input_shape]
+            )
+        elif self.representation_set == "test:":
             val_data = self.model.test_ds
             predictions = self.model.model.predict(
-                val_data[:, 0:self.model.input_shape])
+                val_data[:, 0 : self.model.input_shape]
+            )
         else:
             val_data = self.model.val_ds
             predictions = self.model.model.predict(
-                val_data[:, 0:self.model.input_shape])
+                val_data[:, 0 : self.model.input_shape]
+            )
 
         return val_data, predictions
 
@@ -118,8 +120,8 @@ class GroupDetection:
         point_cloud = {}
         # loop over the class array
         for i, item in enumerate(class_array):
-            start = np.searchsorted(sorted_data[:, -1], item, side='left')
-            stop = np.searchsorted(sorted_data[:, -1], item, side='right') - 1
+            start = np.searchsorted(sorted_data[:, -1], item, side="left")
+            stop = np.searchsorted(sorted_data[:, -1], item, side="right") - 1
             com = compute_com(sorted_data[start:stop, 0:2])
             rg = compute_radius_of_gyration(sorted_data[start:stop, 0:2], com)
 
@@ -152,9 +154,7 @@ class GroupDetection:
             if np.linalg.norm(predictions[i] - target_values[i]) <= 2e-1:
                 accepted_candidates[counter] = i
                 counter += 1
-        accepted_candidates = jnp.array(
-            accepted_candidates[0:counter], dtype=int
-        )
+        accepted_candidates = jnp.array(accepted_candidates[0:counter], dtype=int)
 
         return tf.gather(targets, accepted_candidates)
 
@@ -175,7 +175,8 @@ class GroupDetection:
         validation_data, predictions = self._get_model_predictions()
         accepted_data = self._filter_data(predictions, validation_data)
         representation = self.model.get_embedding_layer_representation(
-            accepted_data)  # get the embedding layer
+            accepted_data
+        )  # get the embedding layer
 
         visualizer = Visualizer(representation, accepted_data[:, -1])
         data = visualizer.tsne_visualization(plot=plot, save=save)

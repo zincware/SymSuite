@@ -2,8 +2,8 @@
 Python module to show generator extraction of SO(3) Lie algebra generators.
 """
 
-from symsuite.test_systems.so3_data import SO3
 from symsuite.generators.generators import GeneratorExtraction
+from symsuite.test_systems.so3_data import SO3
 
 
 def generator_extraction():

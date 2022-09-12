@@ -8,10 +8,12 @@ Copyright Contributors to the Zincware Project.
 
 Description: Module for the computation of so3 data
 """
-from symsuite.data.data_generator import DataGenerator
 from typing import Union
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
+
+from symsuite.data.data_generator import DataGenerator
 
 
 class SO3(DataGenerator):
@@ -74,9 +76,9 @@ class SO3(DataGenerator):
 
         """
         if self.noise:
-            self.radial_values = np.random.uniform(self.radius - self.variance,
-                                                   self.radius + self.variance,
-                                                   points)
+            self.radial_values = np.random.uniform(
+                self.radius - self.variance, self.radius + self.variance, points
+            )
         else:
             self.radial_values = self.radius
 
@@ -112,7 +114,9 @@ class SO3(DataGenerator):
 
         # set domain and generate image data.
         else:
-            raise ValueError(f"Type {type(points)} is not valid for this data generator, try an integer")
+            raise ValueError(
+                f"Type {type(points)} is not valid for this data generator, try an integer"
+            )
 
     def plot_data(self, save: bool = False, show: bool = True):
         """
@@ -133,15 +137,15 @@ class SO3(DataGenerator):
 
         fig = plt.figure()
         ax = fig.add_subplot(111, projection="3d")
-        ax.scatter(self.domain[:, 0],
-                   self.domain[:, 1],
-                   self.domain[:, 2],
-                   marker=".",
-                   color="k")
+        ax.scatter(
+            self.domain[:, 0],
+            self.domain[:, 1],
+            self.domain[:, 2],
+            marker=".",
+            color="k",
+        )
         if save:
-            plt.savefig(f"SO(2)_{len(self.domain)}.svg",
-                        dpi=800,
-                        format="svg")
+            plt.savefig(f"SO(2)_{len(self.domain)}.svg", dpi=800, format="svg")
         plt.show()
 
     def build_clusters(self, **kwargs):

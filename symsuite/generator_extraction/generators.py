@@ -10,14 +10,15 @@ Generators
 ==========
 Python module to extract generators from data.
 """
-import jax.numpy as jnp
-import numpy as np
-from tqdm import tqdm
 import random
-from sklearn.linear_model import LinearRegression
-from sklearn.decomposition import PCA
-import matplotlib.pyplot as plt
 from typing import Tuple
+
+import jax.numpy as jnp
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.decomposition import PCA
+from sklearn.linear_model import LinearRegression
+from tqdm import tqdm
 
 
 class GeneratorExtraction:
@@ -184,9 +185,8 @@ class GeneratorExtraction:
         return jnp.array(basis_vector) / np.linalg.norm(basis_vector)
 
     def _eliminate_closest_vector(
-            self,
-            reference_vectors: list,
-            test_vectors: list) -> np.ndarray:
+        self, reference_vectors: list, test_vectors: list
+    ) -> np.ndarray:
         """
         Remove the closest vectors in the theoretical basis set
 
@@ -362,7 +362,7 @@ class GeneratorExtraction:
             generator = np.concatenate(
                 (
                     generator,
-                    LinearRegression().fit(x_data, np.array(y_data)[:, i]).coef_
+                    LinearRegression().fit(x_data, np.array(y_data)[:, i]).coef_,
                 )
             )
 
@@ -387,7 +387,7 @@ class GeneratorExtraction:
         )
 
     def _extract_generators(
-            self, pca_components: object, factor: object = True
+        self, pca_components: object, factor: object = True
     ) -> tuple:
         """
         Perform PCA on candidates and extract true generators.
@@ -414,7 +414,8 @@ class GeneratorExtraction:
         pca.fit(self.generator_candidates)
         if factor:
             return (
-                np.sqrt(self.dimension) * pca.components_, pca.explained_variance_ratio_
+                np.sqrt(self.dimension) * pca.components_,
+                pca.explained_variance_ratio_,
             )
         else:
             return pca.components_, pca.explained_variance_ratio_
@@ -446,12 +447,13 @@ class GeneratorExtraction:
         plt.show()
 
     def perform_generator_extraction(
-            self,
-            pca_components: int = 4,
-            plot: bool = False,
-            save: bool = False,
-            factor: bool = True,
-            gs_precision: int = 5) -> Tuple:
+        self,
+        pca_components: int = 4,
+        plot: bool = False,
+        save: bool = False,
+        factor: bool = True,
+        gs_precision: int = 5,
+    ) -> Tuple:
         """
         Collect all methods and perform the generator extraction.
 
@@ -476,9 +478,9 @@ class GeneratorExtraction:
                 explained variance list.
         """
 
-        for _ in tqdm(range(self.candidate_runs),
-                      ncols=100,
-                      desc="Producing generator candidates"):
+        for _ in tqdm(
+            range(self.candidate_runs), ncols=100, desc="Producing generator candidates"
+        ):
             try:
                 self._remove_redundancy()
                 self._generate_basis_set(gs_precision)

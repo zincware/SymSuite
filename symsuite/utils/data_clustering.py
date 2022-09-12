@@ -8,10 +8,11 @@ Copyright Contributors to the Zincware Project.
 
 Description: Methods to help with clustering data.
 """
+import sys
+from typing import Tuple
+
 import jax.numpy as jnp
 import numpy as np
-from typing import Tuple
-import sys
 
 
 def _build_condlist(data: np.array, bin_values: dict) -> Tuple:
@@ -37,9 +38,7 @@ def _build_condlist(data: np.array, bin_values: dict) -> Tuple:
     classes = []
     for key in bin_values:
         conditions.append(
-            np.logical_and(
-                data >= (bin_values[key][0]), data <= (bin_values[key][1])
-            )
+            np.logical_and(data >= (bin_values[key][0]), data <= (bin_values[key][1]))
         )
         classes.append(key)
 
@@ -69,11 +68,12 @@ def _function_to_bins(function_values: tf.Tensor, bin_values: dict) -> tf.Tensor
 
 
 def range_binning(
-        image: jnp.ndarrau,
-        domain: jnp.ndarrau,
-        value_range: list,
-        bin_operation: list,
-        representatives: int = 100) -> dict:
+    image: jnp.ndarrau,
+    domain: jnp.ndarrau,
+    value_range: list,
+    bin_operation: list,
+    representatives: int = 100,
+) -> dict:
     """
     A method to apply simple range binning to some data.
 
@@ -121,8 +121,8 @@ def range_binning(
         clustered_data[class_keys[i]] = {}
         filtered_domain = tf.boolean_mask(domain, bin_masks[i])
         filtered_image = tf.boolean_mask(image, bin_masks[i])
-        clustered_data[class_keys[i]]['domain'] = filtered_domain[0:representatives]
-        clustered_data[class_keys[i]]['image'] = filtered_image[0:representatives]
+        clustered_data[class_keys[i]]["domain"] = filtered_domain[0:representatives]
+        clustered_data[class_keys[i]]["image"] = filtered_image[0:representatives]
 
     return clustered_data
 
@@ -156,6 +156,6 @@ def compute_radius_of_gyration(data: np.ndarray, com: np.ndarray):
     -------
 
     """
-    rg_primitive = tf.reduce_sum((data - com)**2, axis=1)
+    rg_primitive = tf.reduce_sum((data - com) ** 2, axis=1)
 
     return tf.reduce_mean(rg_primitive, axis=0)

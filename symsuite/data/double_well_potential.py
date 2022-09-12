@@ -8,14 +8,16 @@ Copyright Contributors to the Zincware Project.
 
 Description: Example data generator for the double well potential.
 """
-from symsuite.data.data_generator import DataGenerator
-from symsuite.utils.data_clustering import range_binning
 from typing import Union
-import numpy as np
+
 import jax
 import jax.numpy as jnp
 import matplotlib.pyplot as plt
+import numpy as np
 from tqdm import tqdm
+
+from symsuite.data.data_generator import DataGenerator
+from symsuite.utils.data_clustering import range_binning
 
 
 class DoubleWellPotential(DataGenerator):
@@ -136,16 +138,16 @@ class DoubleWellPotential(DataGenerator):
         self.plot_data(show=False)
 
         for i, item in tqdm(
-                enumerate(self.clustered_data), ncols=70, total=len(self.clustered_data)
+            enumerate(self.clustered_data), ncols=70, total=len(self.clustered_data)
         ):
-            r = jnp.linalg.norm(self.clustered_data[item]['domain'], axis=1)
-            v = self.clustered_data[item]['image']
-            plt.plot(r, v, '.', label=f"Class {i}", markersize=15)
+            r = jnp.linalg.norm(self.clustered_data[item]["domain"], axis=1)
+            v = self.clustered_data[item]["image"]
+            plt.plot(r, v, ".", label=f"Class {i}", markersize=15)
 
-        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+        plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
         if save:
-            plt.savefig('Clusters.png', dpi=600)
+            plt.savefig("Clusters.png", dpi=600)
 
         plt.show()
 
@@ -166,22 +168,19 @@ class DoubleWellPotential(DataGenerator):
         if self.domain is None:
             self._pick_points(1000, min_val=0, max_val=1.2)
             self._double_well()
-        plt.plot(jnp.linalg.norm(self.domain, axis=1), self.image, '.')
-        plt.xlabel('r')
-        plt.ylabel('V')
+        plt.plot(jnp.linalg.norm(self.domain, axis=1), self.image, ".")
+        plt.xlabel("r")
+        plt.ylabel("V")
         plt.xlim(-0.03, 1.7)
         plt.ylim(-1.5, 1.3)
         plt.grid()
         if save:
-            plt.savefig(f'Double_Well_{len(self.domain)}.svg', dpi=600, format='dpi')
+            plt.savefig(f"Double_Well_{len(self.domain)}.svg", dpi=600, format="dpi")
         if show:
             plt.show()
 
     def build_clusters(
-            self,
-            value_range: list = None,
-            bin_operation: list = None,
-            representatives=1000
+        self, value_range: list = None, bin_operation: list = None, representatives=1000
     ):
         """
         Split the raw function data into classes.
@@ -219,8 +218,10 @@ class DoubleWellPotential(DataGenerator):
             print("Loading additional data.")
             self.load_data(n_classes * representatives * 1000)
 
-        self.clustered_data = range_binning(image=self.image,
-                                            domain=self.domain,
-                                            value_range=value_range,
-                                            bin_operation=bin_operation,
-                                            representatives=representatives)
+        self.clustered_data = range_binning(
+            image=self.image,
+            domain=self.domain,
+            value_range=value_range,
+            bin_operation=bin_operation,
+            representatives=representatives,
+        )
