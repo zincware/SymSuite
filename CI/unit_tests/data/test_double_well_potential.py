@@ -9,7 +9,7 @@ Copyright Contributors to the Zincware Project.
 Description: Test the double_well_potential module.
 """
 import unittest
-from symdet.data.double_well_potential import DoubleWellPotential
+from symsuite.data.double_well_potential import DoubleWellPotential
 
 
 class TestDoubleWellPotential(unittest.TestCase):

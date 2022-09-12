@@ -8,10 +8,10 @@ This involves training a neural
 network and visualizing its embedding layer using TSNE.
 """
 
-from symdet.test_systems.double_well_potential import DoubleWellPotential
-from symdet.models.dense_model import DenseModel
-from symdet.symmetry_groups.data_clustering import DataCluster
-from symdet.symmetry_groups.group_detection import GroupDetection
+from symsuite.test_systems.double_well_potential import DoubleWellPotential
+from symsuite.models.dense_model import DenseModel
+from symsuite.symmetry_groups.data_clustering import DataCluster
+from symsuite.symmetry_groups.group_detection import GroupDetection
 
 
 def main():

@@ -88,9 +88,8 @@ class Visualizer:
             plt.colorbar()
             if save:
                 plt.savefig(
-                    f"tsne_representation_{perplexity}_{n_components}.svg",
-                    dpi=800,
-                    format="svg",
+                    f"tsne_representation_{perplexity}_{n_components}.png",
+                    dpi=600,
                 )
             plt.show()
 

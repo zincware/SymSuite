@@ -1,6 +1,6 @@
 |build| |docs| |madewithpython| |license|
 
-SymDet
+SymSuite
 ------
 
 A python package to perform symmetry detection and generator extraction on
@@ -32,7 +32,7 @@ Install from source
 
 .. code-block:: bash
 
-   git clone https://github.com/zincware/SymDet.git
+   git clone https://github.com/zincware/SymSuite.git
    cd SymDet
    pip3 install . --user
 
@@ -40,7 +40,7 @@ Install from source
 
 .. code-block:: bash
 
-   git clone https://github.com/zincware/SymDet.git
+   git clone https://github.com/zincware/SymSuite.git
    cd SymDet
    conda create -n SymDet python=3.8
    conda activate SymDet
@@ -64,7 +64,7 @@ Getting started
 ===============
 
 As a first step I would suggest looking at the
-`examples <https://github.com/zincware/SymDet/tree/main/examples>`_
+`examples <https://github.com/zincware/SymSuite/tree/main/examples>`_
 directory and following along with some tutorials.
 From here you may get a better idea of what you can use this package for.
 
@@ -78,11 +78,11 @@ mathematician) I would always welcome the feedback.
 
 .. |build| image:: https://github.com/SamTov/SymDet/actions/workflows/python-package.yml/badge.svg
     :alt: Build tests passing
-    :target: https://github.com/SamTov/SymDet/blob/readme_badges/
+    :target: https://github.com/SamTov/SymSuite/blob/readme_badges/
 
 .. |docs| image:: https://readthedocs.org/projects/symdet/badge/?version=latest&style=flat
     :alt: Build tests passing
-    :target: https://symdet.readthedocs.io/en/latest/
+    :target: https://SymSuite.readthedocs.io/en/latest/
 
 .. |license| image:: https://img.shields.io/badge/License-EPLv2.0-purple.svg?style=flat
     :alt: Project license

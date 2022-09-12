@@ -10,12 +10,12 @@ Group Detection
 ===============
 Cluster raw data into symmetry groups
 """
-from symdet.ml_models.dense_model import DenseModel
-from symdet.analysis.model_visualization import Visualizer
+from symsuite.ml_models.dense_model import DenseModel
+from symsuite.analysis.model_visualization import Visualizer
 from typing import Tuple
 import numpy as np
 import tensorflow as tf
-from symdet.utils.data_clustering import compute_com, compute_radius_of_gyration
+from symsuite.utils.data_clustering import compute_com, compute_radius_of_gyration
 
 
 class GroupDetection:
