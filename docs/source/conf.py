@@ -12,7 +12,7 @@ html_theme = "sphinx_rtd_theme"
 
 # -- Project information -----------------------------------------------------
 
-project = "SymDet"
+project = "SymSuite"
 copyright = "2021, Samuel Tovey"
 author = "Samuel Tovey"
 

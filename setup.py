@@ -18,7 +18,7 @@ with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="SymDet",
+    name="SymSuite",
     version="0.0.1",
     author="Samuel Tovey",
     author_email="tovey.samuel@gmail.com",

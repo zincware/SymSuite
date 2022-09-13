@@ -25,15 +25,22 @@ At the moment the code can perform the following tasks.
    for two dimensional data but am working to extend this to arbitrary systems.
 3. Identify groups connected by symmetry in the tSNE representation and collect them for generator extraction.
 
-More work will be done to bridge these two processes in the hope that a pipeline from raw data to generators can be
-formed.
+.. toctree::
+   :maxdepth: 1
+   :caption: First Steps:
+
+   installation
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
+   :caption: Theoretical Minimum:
 
-   installation
    theory
+
+.. toctree::
+   :maxdepth: 1
+   :caption: User Guide:
+
    notebooks
    modules
 

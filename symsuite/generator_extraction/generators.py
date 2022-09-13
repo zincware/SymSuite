@@ -1,18 +1,10 @@
 """
-This file is part of the SymDet distribution (https://github.com/SamTov/SymDet).
-Copyright (c) 2021 Samuel Tovey.
+This program and the accompanying materials are made available under the terms of the
+Eclipse Public License v2.0 which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-v20.html
+SPDX-License-Identifier: EPL-2.0
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, version 3.
-
-This program is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.
+Copyright Contributors to the Zincware Project.
 
 Generators
 ==========
@@ -388,7 +380,9 @@ class GeneratorExtraction:
             - (np.dot(pair[0], self.basis[1]) * np.dot(pair[1], self.basis[0]))
         )
 
-    def _extract_generators(self, pca_components: int, factor: bool = True) -> Tuple[np.ndarray, np.ndarray]:
+    def _extract_generators(
+            self, pca_components: object, factor: object = True
+    ) -> tuple:
         """
         Perform PCA on candidates and extract true generators.
 
@@ -415,7 +409,7 @@ class GeneratorExtraction:
         if factor:
             return np.sqrt(self.dimension) * pca.components_, pca.explained_variance_ratio_
         else:
-            return pca.components_, pca.explained_variance_ratio_
+            return (pca.components_, pca.explained_variance_ratio_)
 
     def _plot_results(self, std_values: list, save: bool = False):
         """
