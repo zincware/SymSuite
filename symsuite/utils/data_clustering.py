@@ -14,7 +14,7 @@ import jax.numpy as jnp
 import numpy as np
 
 
-def _build_condlist(data: np.array, bin_values: dict) -> Tuple:
+def _build_condition_list(data: np.array, bin_values: dict) -> Tuple:
     """
     Build the condition list for the piecewise implementation.
 
@@ -61,7 +61,7 @@ def _function_to_bins(function_values: jnp.ndarray, bin_values: dict) -> jnp.nda
             Conditions from the cond list build.
     """
 
-    conditions, functions = _build_condlist(function_values, bin_values)
+    conditions, functions = _build_condition_list(function_values, bin_values)
 
     return jnp.array(conditions)
 

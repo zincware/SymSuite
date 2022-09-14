@@ -39,64 +39,21 @@ class GroupDetection:
     """
 
     def __init__(
-        self, model: DenseModel, data_clusters: dict, representation_set: str = "train"
+        self, model_representation: np.ndarray, data_classes: list
     ):
         """
         Constructor for the GroupDetection class.
 
         Parameters
         ----------
-        model : DenseModel
-                Model to use in the group detection.
-        data_clusters : dict
-                Data cluster class used for the partitioning of the data.
-        representation_set : str
-                Which set to use in the representation, train, validation, or test.
+        model_representation : np.ndarray
+                Model representation on which to perform the symmetry connection
+                analysis.
+        data_classes : list
+                List of the data classes for better visualization
         """
-        self.model = model
-        self.data = data_clusters
-        self.representation_set = representation_set
-        self.model.add_data(self.data)  # add the data to the model.
-
-    def _get_model_predictions(self) -> Tuple:
-        """
-        Train the attached model.
-
-        Returns
-        -------
-        val_data : tf.Tensor
-                Data on which the prediction were made.
-        model_predictions : Tuple
-                Embedding layer of the NN on validation data.
-        """
-        self.model.train_model()
-        if self.representation_set == "train":
-            val_data = self.model.train_ds
-            predictions = self.model.model.predict(
-                val_data[:, 0 : self.model.input_shape]
-            )
-        elif self.representation_set == "test:":
-            val_data = self.model.test_ds
-            predictions = self.model.model.predict(
-                val_data[:, 0 : self.model.input_shape]
-            )
-        else:
-            val_data = self.model.val_ds
-            predictions = self.model.model.predict(
-                val_data[:, 0 : self.model.input_shape]
-            )
-
-        return val_data, predictions
-
-    def _run_visualization(self):
-        """
-        Perform a visualization on the TSNE data.
-
-        Returns
-        -------
-
-        """
-        pass
+        self.model_representations = model_representation
+        self.data_classes = data_classes
 
     @staticmethod
     def _cluster_detection(function_data: np.ndarray, data: np.ndarray):
@@ -133,33 +90,6 @@ class GroupDetection:
                 point_cloud[item] = sorted_data[start:stop, 2:-1]
 
         return point_cloud
-
-    @staticmethod
-    def _filter_data(predictions: jnp.ndarray, targets: jnp.ndarray):
-        """
-        Check which data points are predicted well and include them in the data.
-
-        Parameters
-        ----------
-        targets : jnp.ndarray
-                Target values on which predictions were made.
-        predictions : jnp.ndarray
-                Network predictions.
-
-        Returns
-        -------
-
-        """
-        accepted_candidates = np.zeros(len(predictions))
-        target_values = to_categorical(targets[:, -1])
-        counter = 0
-        for i, item in enumerate(predictions):
-            if np.linalg.norm(predictions[i] - target_values[i]) <= 2e-1:
-                accepted_candidates[counter] = i
-                counter += 1
-        accepted_candidates = jnp.array(accepted_candidates[0:counter], dtype=int)
-
-        return jnp.take(targets, accepted_candidates, axis=0)
 
     def run_symmetry_detection(self, plot: bool = True, save: bool = False):
         """

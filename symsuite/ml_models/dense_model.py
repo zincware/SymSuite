@@ -23,8 +23,9 @@ class DenseModel:
     Attributes
     ----------
     data_dict : dict
-            Dictionary of data where the key is the class name and the values are the coordinates belongin to that
-            class. This is fundamentall a classification problem!
+            Dictionary of data where the key is the class name and the values are the
+            coordinates belonging to that class. This is fundamental to a classification
+            problem.
     n_layers : int
             Number of hidden layers to use.
     units : int

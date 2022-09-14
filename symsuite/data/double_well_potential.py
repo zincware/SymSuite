@@ -46,8 +46,8 @@ class DoubleWellPotential(DataGenerator):
 
     .. math:: V = -a \cdot (x^{2} + y^{2}) + (x^{2} + y^{2})^{2}
 
-    We will require the data to be stored as x,y  coordinates in order to facilitate the generator extraction in this
-    part of the process.
+    We will require the data to be stored as x,y  coordinates in order to facilitate
+    the generator extraction in this part of the process.
     """
 
     def __init__(self, a: float = 2.3):
