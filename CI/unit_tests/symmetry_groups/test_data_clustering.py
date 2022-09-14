@@ -2,6 +2,7 @@
 Test module for the Data Clustering module.
 """
 import unittest
+
 import numpy as np
 
 

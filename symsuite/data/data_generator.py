@@ -11,8 +11,9 @@ routines through a data generator child class.
 """
 import abc
 from typing import Union
+
+import jax.numpy as jnp
 import numpy as np
-import tensorflow as tf
 
 
 class DataGenerator(metaclass=abc.ABCMeta):

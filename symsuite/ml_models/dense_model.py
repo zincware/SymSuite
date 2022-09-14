@@ -10,8 +10,8 @@ Dense Model
 ===========
 Dense neural network model
 """
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 from tensorflow.keras import regularizers
 from tensorflow.keras.layers import Input
 
@@ -23,8 +23,9 @@ class DenseModel:
     Attributes
     ----------
     data_dict : dict
-            Dictionary of data where the key is the class name and the values are the coordinates belongin to that
-            class. This is fundamentall a classification problem!
+            Dictionary of data where the key is the class name and the values are the
+            coordinates belonging to that class. This is fundamental to a classification
+            problem.
     n_layers : int
             Number of hidden layers to use.
     units : int
@@ -63,7 +64,8 @@ class DenseModel:
         lr: float = 1e-4,
         batch_size: int = 100,
         terminate_patience: int = 10,
-        lr_patience: int = 5):
+        lr_patience: int = 5,
+    ):
         """
         Constructor fpr the Dense model class.
 
@@ -121,7 +123,9 @@ class DenseModel:
 
         """
         self.data_dict = data
-        self.input_shape = len(self.data_dict[list(self.data_dict.keys())[0]]['domain'][0])
+        self.input_shape = len(
+            self.data_dict[list(self.data_dict.keys())[0]]["domain"][0]
+        )
 
     def _shuffle_and_split_data(self):
         """
@@ -135,12 +139,16 @@ class DenseModel:
         for key in self.data_dict:
             labels = tf.repeat(
                 tf.convert_to_tensor(np.array(key), dtype=tf.float32),
-                len(self.data_dict[key]['domain']),
+                len(self.data_dict[key]["domain"]),
             )
 
-            stacked_data = tf.concat([tf.cast(self.data_dict[key]['domain'], dtype=tf.float32),
-                                      tf.transpose([labels])],
-                                     axis=1)
+            stacked_data = tf.concat(
+                [
+                    tf.cast(self.data_dict[key]["domain"], dtype=tf.float32),
+                    tf.transpose([labels]),
+                ],
+                axis=1,
+            )
 
             data_volume = len(stacked_data)
             train, test, validate = tf.split(
@@ -155,18 +163,15 @@ class DenseModel:
             if self.train_ds is None:
                 self.train_ds = train
             else:
-                self.train_ds = tf.concat([self.train_ds, train],
-                                          axis=0)
+                self.train_ds = tf.concat([self.train_ds, train], axis=0)
             if self.test_ds is None:
                 self.test_ds = test
             else:
-                self.test_ds = tf.concat([self.test_ds, test],
-                                         axis=0)
+                self.test_ds = tf.concat([self.test_ds, test], axis=0)
             if self.val_ds is None:
                 self.val_ds = validate
             else:
-                self.val_ds = tf.concat([self.val_ds, validate],
-                                        axis=0)
+                self.val_ds = tf.concat([self.val_ds, validate], axis=0)
 
         self.train_ds = tf.random.shuffle(self.train_ds)
         self.test_ds = tf.random.shuffle(self.test_ds)
@@ -268,12 +273,12 @@ class DenseModel:
         # Train the model
         for i in range(1, 6):
             self.model.fit(
-                x=self.train_ds[:, 0:self.input_shape],
+                x=self.train_ds[:, 0 : self.input_shape],
                 y=tf.keras.utils.to_categorical(self.train_ds[:, -1]),
                 batch_size=self.batch_size,
                 shuffle=True,
                 validation_data=(
-                    self.test_ds[:, 0:self.input_shape],
+                    self.test_ds[:, 0 : self.input_shape],
                     tf.keras.utils.to_categorical(self.test_ds[:, -1]),
                 ),
                 verbose=1,
@@ -290,7 +295,8 @@ class DenseModel:
         """
 
         attributes = self.model.evaluate(
-            x=self.val_ds[:, 0:self.input_shape], y=tf.keras.utils.to_categorical(self.val_ds[:, -1])
+            x=self.val_ds[:, 0 : self.input_shape],
+            y=tf.keras.utils.to_categorical(self.val_ds[:, -1]),
         )
         print(f"Loss: {attributes[0]} \n" f"Accuracy: {attributes[1]}")
 
@@ -316,4 +322,4 @@ class DenseModel:
             model.add(layer)
 
         model.build()
-        return model.predict(data_array[:, 0:self.input_shape])
+        return model.predict(data_array[:, 0 : self.input_shape])

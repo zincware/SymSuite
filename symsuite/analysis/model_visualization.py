@@ -11,8 +11,8 @@ Model Visualization
 Visualize the NN models in different ways
 """
 import matplotlib.pyplot as plt
-from sklearn.manifold import TSNE
 import numpy as np
+from sklearn.manifold import TSNE
 
 
 class Visualizer:
@@ -42,11 +42,9 @@ class Visualizer:
         self.data = data
         self.colour_map = colour_map
 
-    def tsne_visualization(self,
-                           perplexity=50,
-                           n_components=2,
-                           plot: bool = True,
-                           save: bool = False) -> np.ndarray:
+    def tsne_visualization(
+        self, perplexity=50, n_components=2, plot: bool = True, save: bool = False
+    ) -> np.ndarray:
         """
         Display a TSNE representation of the models embedding layer
 
@@ -70,9 +68,9 @@ class Visualizer:
         See the theory documentation for a full overview of these parameters, particularly in the case of the TSNE
         values.
         """
-        tsne_model = TSNE(n_components=n_components,
-                          perplexity=perplexity,
-                          random_state=1)
+        tsne_model = TSNE(
+            n_components=n_components, perplexity=perplexity, random_state=1
+        )
         tsne_representation = tsne_model.fit_transform(self.data)
 
         if plot:
@@ -80,7 +78,7 @@ class Visualizer:
                 tsne_representation[:, 0],
                 tsne_representation[:, 1],
                 c=self.colour_map,
-                marker='.',
+                marker=".",
                 cmap="viridis",
                 vmax=11,
                 vmin=-1,

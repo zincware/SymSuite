@@ -8,10 +8,12 @@ Copyright Contributors to the Zincware Project.
 
 Description: Module for the computation of so2 data
 """
-from symsuite.data.data_generator import DataGenerator
 from typing import Union
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
+
+from symsuite.data.data_generator import DataGenerator
 
 
 class SO2(DataGenerator):
@@ -74,9 +76,9 @@ class SO2(DataGenerator):
 
         """
         if self.noise:
-            self.radial_values = np.random.uniform(self.radius - self.variance,
-                                                   self.radius + self.variance,
-                                                   points)
+            self.radial_values = np.random.uniform(
+                self.radius - self.variance, self.radius + self.variance, points
+            )
         else:
             self.radial_values = self.radius
 
@@ -110,7 +112,9 @@ class SO2(DataGenerator):
 
         # set domain and generate image data.
         else:
-            raise ValueError(f"Type {type(points)} is not valid for this data generator, try an integer")
+            raise ValueError(
+                f"Type {type(points)} is not valid for this data generator, try an integer"
+            )
 
     def plot_data(self, save: bool = False, show: bool = True):
         """

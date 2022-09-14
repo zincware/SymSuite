@@ -8,13 +8,13 @@ Copyright Contributors to the Zincware Project.
 
 Description: Methods to help with clustering data.
 """
-import tensorflow as tf
-import numpy as np
 from typing import Tuple
-import sys
+
+import jax.numpy as jnp
+import numpy as np
 
 
-def _build_condlist(data: np.array, bin_values: dict) -> Tuple:
+def _build_condition_list(data: np.array, bin_values: dict) -> Tuple:
     """
     Build the condition list for the piecewise implementation.
 
@@ -37,16 +37,14 @@ def _build_condlist(data: np.array, bin_values: dict) -> Tuple:
     classes = []
     for key in bin_values:
         conditions.append(
-            np.logical_and(
-                data >= (bin_values[key][0]), data <= (bin_values[key][1])
-            )
+            np.logical_and(data >= (bin_values[key][0]), data <= (bin_values[key][1]))
         )
         classes.append(key)
 
     return conditions, classes
 
 
-def _function_to_bins(function_values: tf.Tensor, bin_values: dict) -> tf.Tensor:
+def _function_to_bins(function_values: jnp.ndarray, bin_values: dict) -> jnp.ndarray:
     """
     Sort function values into bins.
 
@@ -59,29 +57,49 @@ def _function_to_bins(function_values: tf.Tensor, bin_values: dict) -> tf.Tensor
 
     Returns
     -------
-    conditions : tf.Tensor
+    conditions : jnp.ndarrau
             Conditions from the cond list build.
     """
 
-    conditions, functions = _build_condlist(function_values, bin_values)
+    conditions, functions = _build_condition_list(function_values, bin_values)
 
-    return tf.convert_to_tensor(conditions)
+    return jnp.array(conditions)
+
+
+def to_categorical(data: jnp.ndarray):
+    """
+    Implementation of the keras.to_categorical function
+
+    Parameters
+    ----------
+    data : jnp.ndarray (n_points,)
+
+    Returns
+    -------
+    categorical_data : jnp.ndarray (n_points, n_classes)
+            Data converted into categorical format.
+    """
+    order = int(max(data) + 1)
+    classes = jnp.eye(order)
+
+    return jnp.take(classes, data, axis=0)
 
 
 def range_binning(
-        image: tf.Tensor,
-        domain: tf.Tensor,
-        value_range: list,
-        bin_operation: list,
-        representatives: int = 100) -> dict:
+    image: jnp.ndarray,
+    domain: jnp.ndarray,
+    value_range: list,
+    bin_operation: list,
+    representatives: int = 100,
+) -> dict:
     """
     A method to apply simple range binning to some data.
 
     Parameters
     ----------
-    image : tf.Tensor
+    image : jnp.ndarrau
             data to cluster.
-    domain : tf.Tensor
+    domain : jnp.ndarrau
             data pool to return clustered.
     representatives : int
             Number of class representatives to have for each bin.
@@ -110,7 +128,7 @@ def range_binning(
     bin_masks = _function_to_bins(image, bin_values)
 
     # Check that there is enough data in each class.
-    bin_count = tf.reduce_sum(tf.cast(bin_masks, tf.int8), 1)
+    bin_count = jnp.sum(bin_masks.astype(int), axis=1)
     if any(bin_count) < representatives:
         print("WARNING: Not enough data! Some classes will be under-represented.")
 
@@ -119,10 +137,10 @@ def range_binning(
     clustered_data = {}
     for i in range(len(class_keys)):
         clustered_data[class_keys[i]] = {}
-        filtered_domain = tf.boolean_mask(domain, bin_masks[i])
-        filtered_image = tf.boolean_mask(image, bin_masks[i])
-        clustered_data[class_keys[i]]['domain'] = filtered_domain[0:representatives]
-        clustered_data[class_keys[i]]['image'] = filtered_image[0:representatives]
+        filtered_domain = domain[bin_masks[i]]
+        filtered_image = image[bin_masks[i]]
+        clustered_data[class_keys[i]]["domain"] = filtered_domain[0:representatives]
+        clustered_data[class_keys[i]]["image"] = filtered_image[0:representatives]
 
     return clustered_data
 
@@ -140,7 +158,7 @@ def compute_com(data: np.ndarray):
     -------
 
     """
-    return tf.reduce_mean(data, axis=0)
+    return jnp.mean(data, axis=0)
 
 
 def compute_radius_of_gyration(data: np.ndarray, com: np.ndarray):
@@ -156,6 +174,6 @@ def compute_radius_of_gyration(data: np.ndarray, com: np.ndarray):
     -------
 
     """
-    rg_primitive = tf.reduce_sum((data - com)**2, axis=1)
+    rg_primitive = jnp.sum((data - com) ** 2, axis=1)
 
-    return tf.reduce_mean(rg_primitive, axis=0)
+    return jnp.mean(rg_primitive, axis=0)

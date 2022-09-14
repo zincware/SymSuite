@@ -8,13 +8,16 @@ Copyright Contributors to the Zincware Project.
 
 Description: Example data generator for the double well potential.
 """
+from typing import Union
+
+import jax
+import jax.numpy as jnp
+import matplotlib.pyplot as plt
+import numpy as np
+from tqdm import tqdm
+
 from symsuite.data.data_generator import DataGenerator
 from symsuite.utils.data_clustering import range_binning
-from typing import Union
-import numpy as np
-import tensorflow as tf
-import matplotlib.pyplot as plt
-from tqdm import tqdm
 
 
 class DoubleWellPotential(DataGenerator):
@@ -43,8 +46,8 @@ class DoubleWellPotential(DataGenerator):
 
     .. math:: V = -a \cdot (x^{2} + y^{2}) + (x^{2} + y^{2})^{2}
 
-    We will require the data to be stored as x,y  coordinates in order to facilitate the generator extraction in this
-    part of the process.
+    We will require the data to be stored as x,y  coordinates in order to facilitate
+    the generator extraction in this part of the process.
     """
 
     def __init__(self, a: float = 2.3):
@@ -66,8 +69,8 @@ class DoubleWellPotential(DataGenerator):
         -------
 
         """
-        square_radii = tf.reduce_sum(tf.math.square(self.domain), 1)
-        self.image = -self.a * square_radii + tf.square(square_radii)
+        square_radii = jnp.sum(self.domain ** 2, axis=1)
+        self.image = -self.a * square_radii + square_radii ** 2
 
     def _pick_points(self, n_points: int, min_val: float = 0, max_val: float = 1.6):
         """
@@ -84,11 +87,13 @@ class DoubleWellPotential(DataGenerator):
 
         Returns
         -------
-
+        Updates the class attributes.
         """
-        self.domain = tf.random.uniform(shape=(n_points, 2),
-                                        minval=min_val,
-                                        maxval=max_val)
+        key = jax.random.PRNGKey(0)
+        key, subkey = jax.random.split(key)
+        self.domain = jax.random.uniform(
+            subkey, shape=(n_points, 2), minval=min_val, maxval=max_val
+        )
 
     def load_data(self, points: Union[int, np.ndarray], save: bool = False):
         """
@@ -97,9 +102,10 @@ class DoubleWellPotential(DataGenerator):
         Parameters
         ----------
         points : Union[int, np.ndarray]
-                Points to generate, either an np.ndarray or an integer. If an integer, N points will be generated, if
-                an array, it will either be treated as input to a function to generate values or those indices will be
-                drawn from a pool.
+                Points to generate, either an np.ndarray or an integer. If an integer,
+                N points will be generated, if an array, it will either be treated as
+                input to a function to generate values or those indices will be drawn
+                from a pool.
         save : bool
                 If true, save the data after generating it.
 
@@ -114,7 +120,7 @@ class DoubleWellPotential(DataGenerator):
 
         # set domain and generate image data.
         else:
-            self.domain = tf.convert_to_tensor(points)
+            self.domain = jnp.array(points)
             self._double_well()
 
     def plot_clusters(self, save: bool = False):
@@ -131,15 +137,17 @@ class DoubleWellPotential(DataGenerator):
         """
         self.plot_data(show=False)
 
-        for i, item in tqdm(enumerate(self.clustered_data), ncols=70, total=len(self.clustered_data)):
-            r = tf.norm(self.clustered_data[item]['domain'], axis=1)
-            v = self.clustered_data[item]['image']
-            plt.plot(r, v, '.', label=f"Class {i}", markersize=15)
+        for i, item in tqdm(
+            enumerate(self.clustered_data), ncols=70, total=len(self.clustered_data)
+        ):
+            r = jnp.linalg.norm(self.clustered_data[item]["domain"], axis=1)
+            v = self.clustered_data[item]["image"]
+            plt.plot(r, v, ".", label=f"Class {i}", markersize=15)
 
-        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+        plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
         if save:
-            plt.savefig('Clusters.png', dpi=600)
+            plt.savefig("Clusters.png", dpi=600)
 
         plt.show()
 
@@ -160,18 +168,20 @@ class DoubleWellPotential(DataGenerator):
         if self.domain is None:
             self._pick_points(1000, min_val=0, max_val=1.2)
             self._double_well()
-        plt.plot(tf.norm(self.domain, axis=1), self.image, '.')
-        plt.xlabel('r')
-        plt.ylabel('V')
+        plt.plot(jnp.linalg.norm(self.domain, axis=1), self.image, ".")
+        plt.xlabel("r")
+        plt.ylabel("V")
         plt.xlim(-0.03, 1.7)
         plt.ylim(-1.5, 1.3)
         plt.grid()
         if save:
-            plt.savefig(f'Double_Well_{len(self.domain)}.svg', dpi=600, format='dpi')
+            plt.savefig(f"Double_Well_{len(self.domain)}.svg", dpi=600, format="dpi")
         if show:
             plt.show()
 
-    def build_clusters(self, value_range: list = None, bin_operation: list = None, representatives=1000):
+    def build_clusters(
+        self, value_range: list = None, bin_operation: list = None, representatives=1000
+    ):
         """
         Split the raw function data into classes.
 
@@ -191,7 +201,8 @@ class DoubleWellPotential(DataGenerator):
 
         Notes
         -----
-        In the double well potential we can simply use the range_binning clustering algorithm.
+        In the double well potential we can simply use the range_binning clustering
+        algorithm.
         """
         # Replace None type parameters.
         if bin_operation is None:
@@ -207,8 +218,10 @@ class DoubleWellPotential(DataGenerator):
             print("Loading additional data.")
             self.load_data(n_classes * representatives * 1000)
 
-        self.clustered_data = range_binning(image=self.image,
-                                            domain=self.domain,
-                                            value_range=value_range,
-                                            bin_operation=bin_operation,
-                                            representatives=representatives)
+        self.clustered_data = range_binning(
+            image=self.image,
+            domain=self.domain,
+            value_range=value_range,
+            bin_operation=bin_operation,
+            representatives=representatives,
+        )
